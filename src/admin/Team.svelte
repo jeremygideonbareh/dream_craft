@@ -23,7 +23,11 @@
     busy = false;
   }
   async function change(m: Member, patch: Partial<Member>) {
-    if (m.user_id === app.session?.user.id) { toast('You cannot change your own access.'); return; }
+    if (m.user_id === app.session?.user.id) {
+      toast('You cannot change your own access.');
+      await load();   // put the dropdown back to what it really is
+      return;
+    }
     if (await setMember(m.user_id, patch)) await load();
   }
 </script>

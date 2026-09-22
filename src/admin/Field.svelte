@@ -15,9 +15,33 @@
   const value = $derived(obj[k]);
   const name = $derived(label ?? humanize(String(k)));
 
+  // friendlier names for the handful of keys whose code name isn't obvious
+  const NAMES: Record<string, string> = {
+    lede: 'Intro paragraph', eyebrow: 'Small label above the heading',
+    titleAccent: 'Heading, highlighted words', titleEnd: 'Heading, last words',
+    line1: 'Headline line 1', line2: 'Headline line 2 (highlighted)', line3: 'Headline line 3',
+    cta: 'Closing call to action', sub: 'Line under the heading', blurb: 'Short description',
+    short: 'Short name', alt: 'Description for screen readers', imageAlt: 'Description for screen readers',
+    trust: 'Small facts under the buttons', sections: 'Sections, in order',
+    estimate: 'Show a price estimate for this', defaultQty: 'Quantity to start from',
+    unit: 'What the quantity counts', note: 'Small note', value: 'Saved value (not shown to customers)',
+    visible: 'Show on the website', hex: 'Colour', from: 'Starting price (₹)', qty: 'Number of invites',
+    featured: 'Highlight this package', primaryButton: 'Main button', secondaryButton: 'Second button',
+    whatsappLabel: 'WhatsApp link text', itemHint: 'Text under each photo',
+    ticker: 'Announcement bar messages', madeIn: 'Line in the footer bar',
+    startTitle: 'Footer heading', startText: 'Footer paragraph',
+    showFormerly: 'Show "formerly Dream Craft"', rushWithinDays: 'Rush if the date is within (days)',
+    rangeSpreadPercent: 'Estimate range width (%)', bulkDiscountAbove: 'Bulk discount above (pieces)',
+    bulkDiscountPercent: 'Bulk discount (%)', customFromPerInvite: 'Custom invites from (₹ each)',
+    foilNamesPerInvite: 'Foil names (₹ each)', foilFullPerInvite: 'Full-page foil (₹ each)',
+    rushPerInvite: 'Rush order (₹ each)', nextSteps: 'What happens next (3 lines)',
+  };
+
   function humanize(s: string) {
+    if (NAMES[s]) return NAMES[s];
     return s
       .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/([a-zA-Z])(\d)/g, '$1 $2')
       .replace(/[_-]/g, ' ')
       .replace(/^./, (c) => c.toUpperCase());
   }
@@ -31,6 +55,7 @@
       for (const [key, v] of Object.entries(item)) {
         out[key] = key === 'id' ? crypto.randomUUID().slice(0, 8)
           : key === 'visible' ? true
+          : /qty|quantity/i.test(key) ? 1
           : blankFrom(v);
       }
       return out;

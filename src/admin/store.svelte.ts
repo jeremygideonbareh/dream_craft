@@ -11,13 +11,14 @@ export { defaults, STAFF_DOCS };
 export type Role = 'admin' | 'staff';
 
 export interface Member { user_id: string; email: string; name: string | null; role: Role; active: boolean }
-export interface Doc { key: DocKey; draft: any; published: any; draft_updated_at: string; published_at: string | null }
+export interface Doc { key: DocKey; draft: any; published: any; draft_updated_at: string; published_at: string | null; saved?: string }
 
 export const app = $state({
   session: null as Session | null,
   me: null as Member | null,
   docs: {} as Record<string, Doc>,
   loading: true,
+  checking: false,   // looking up this login's role
   error: '',
   toast: '',
 });
@@ -40,10 +41,13 @@ export async function initSession() {
 
 async function setSession(s: Session | null) {
   app.session = s;
-  app.me = null;
-  if (!s) return;
+  if (!s) { app.me = null; return; }
+  // keep the old value while we look up the role, so the panel never flashes
+  // "No access" at someone who does have access
+  app.checking = true;
   const { data } = await sb.from('staff_members').select('*').eq('user_id', s.user.id).maybeSingle();
   app.me = (data as Member) || null;
+  app.checking = false;
   if (app.me?.active) await loadDocs();
 }
 
@@ -58,7 +62,13 @@ export async function loadDocs() {
   const { data, error } = await sb.from('site_content').select('*');
   if (error) { app.error = error.message; return; }
   const next: Record<string, Doc> = {};
-  for (const row of data as Doc[]) next[row.key] = row;
+  for (const row of data as Doc[]) {
+    // Postgres returns JSON keys in its own order; show them in the order the
+    // site defines them, so the hero comes before the footer.
+    const tpl = defaults[row.key as DocKey];
+    const draft = ordered(tpl, row.draft);
+    next[row.key] = { ...row, draft, published: ordered(tpl, row.published), saved: JSON.stringify(draft) };
+  }
   // fill in any document the code knows about but the database doesn't yet
   for (const key of Object.keys(defaults) as DocKey[]) {
     next[key] ??= { key, draft: structuredClone(defaults[key]), published: {}, draft_updated_at: '', published_at: null };
@@ -66,15 +76,50 @@ export async function loadDocs() {
   app.docs = next;
 }
 
+// rebuild `val` with the key order of `tpl`, keeping anything extra at the end
+function ordered(tpl: unknown, val: unknown): unknown {
+  if (Array.isArray(val)) return val.map((v) => ordered(Array.isArray(tpl) ? tpl[0] : undefined, v));
+  if (!val || typeof val !== 'object' || !tpl || typeof tpl !== 'object' || Array.isArray(tpl)) return val;
+  const v = val as Record<string, unknown>;
+  const out: Record<string, unknown> = {};
+  for (const k of Object.keys(tpl as Record<string, unknown>)) if (k in v) out[k] = ordered((tpl as Record<string, unknown>)[k], v[k]);
+  for (const k of Object.keys(v)) if (!(k in out)) out[k] = v[k];
+  return out;
+}
+
+// edits that exist only in this browser and would be lost on a refresh
+export const unsaved = () =>
+  (Object.keys(app.docs) as DocKey[]).filter((k) => app.docs[k].saved !== undefined && JSON.stringify(app.docs[k].draft) !== app.docs[k].saved);
+
 export const unpublished = () =>
   (Object.keys(app.docs) as DocKey[]).filter(
     (k) => canEdit(k) && JSON.stringify(app.docs[k].draft) !== JSON.stringify(app.docs[k].published)
   );
 
+// A product's id appears in quote links, so give new items a readable one
+// based on their title, and never allow two the same.
+function tidyIds(doc: unknown) {
+  if (!Array.isArray(doc)) return doc;
+  const seen = new Set<string>();
+  for (const item of doc as Record<string, string>[]) {
+    if (!item || typeof item !== 'object' || !('id' in item)) continue;
+    const auto = /^[0-9a-f]{8}$/.test(item.id || '');
+    let id = auto || !item.id
+      ? String(item.title || item.id || 'item').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'item'
+      : item.id;
+    let n = 2;
+    while (seen.has(id)) id = `${id}-${n++}`;
+    seen.add(id);
+    item.id = id;
+  }
+  return doc;
+}
+
 // Optimistic concurrency: refuse to overwrite a draft someone else changed.
 export async function saveDoc(key: DocKey) {
   const doc = app.docs[key];
   if (!doc) return false;
+  if (key === 'products' || key === 'gallery') tidyIds(doc.draft);
   const { data, error } = await sb
     .from('site_content')
     .update({ draft: doc.draft, draft_updated_at: new Date().toISOString(), draft_updated_by: app.session?.user.id })
@@ -88,6 +133,7 @@ export async function saveDoc(key: DocKey) {
     return false;
   }
   doc.draft_updated_at = data.draft_updated_at;
+  doc.saved = JSON.stringify(doc.draft);
   return true;
 }
 

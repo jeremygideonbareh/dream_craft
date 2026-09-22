@@ -4,7 +4,7 @@
   import Enquiries from './Enquiries.svelte';
   import Editor from './Editor.svelte';
   import Team from './Team.svelte';
-  import { app, initSession, signOut, isAdmin, unpublished, publish } from './store.svelte';
+  import { app, initSession, signOut, isAdmin, unpublished, unsaved, publish } from './store.svelte';
   import type { DocKey } from '../content/defaults';
 
   type Screen = { id: string; label: string; doc?: DocKey; title?: string; hint?: string; admin?: boolean };
@@ -29,6 +29,13 @@
 
   initSession();
 
+  // don't let a stray refresh throw away typing that hasn't been saved
+  $effect(() => {
+    const warn = (e: BeforeUnloadEvent) => { if (unsaved().length) e.preventDefault(); };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  });
+
   async function publishAll() {
     if (!pending.length) return;
     publishing = true;
@@ -37,7 +44,7 @@
   }
 </script>
 
-{#if app.loading}
+{#if app.loading || app.checking}
   <p class="boot">Loading…</p>
 {:else if !app.session}
   <Login />
@@ -52,7 +59,7 @@
 {:else}
   <div class="shell">
     <aside class="side">
-      <p class="side__brand">mynsé<span>ra</span><small>studio panel</small></p>
+      <p class="side__brand"><span class="side__name">myns<span>é</span>ra</span><small>studio panel</small></p>
       <nav>
         {#each visible as s}
           <button class="side__link" class:is-on={current.id === s.id} onclick={() => (screen = s.id)}>{s.label}</button>
@@ -66,6 +73,11 @@
     </aside>
 
     <main class="screen">
+      {#if unsaved().length}
+        <div class="publish publish--unsaved">
+          <span>You have changes that aren't saved yet: {unsaved().join(', ')}</span>
+        </div>
+      {/if}
       {#if pending.length}
         <div class="publish">
           <span><b>{pending.length}</b> section{pending.length > 1 ? 's' : ''} with unpublished changes: {pending.join(', ')}</span>

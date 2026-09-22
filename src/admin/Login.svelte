@@ -26,7 +26,7 @@
 
 <div class="login">
   <div class="login__box">
-    <p class="login__brand">mynsé<span>ra</span></p>
+    <p class="login__brand">myns<span>é</span>ra</p>
     <h1>{mode === 'up' ? 'Create your login' : mode === 'reset' ? 'Reset your password' : 'Studio sign in'}</h1>
 
     <form onsubmit={(e) => { e.preventDefault(); go(); }}>
