@@ -9,11 +9,11 @@ export const defaults = {
   settings: {
     brand: {
       display: 'Mynsera',
-      formerly: 'Dream Craft',
+      formerly: '',
       tagline: 'Invitations, florals & keepsakes, made by hand in Shillong',
       description:
-        'Mynsera (formerly Dream Craft) handcrafts custom wedding invitations, bouquets, boutonnieres, ring holders, cake toppers and personalised gifts in Shillong, Meghalaya. Get an approximate quote in minutes.',
-      showFormerly: true,
+        'Mynsera handcrafts custom wedding invitations, bouquets, boutonnieres, ring holders, cake toppers and personalised gifts in Shillong, Meghalaya. Get an approximate quote in minutes.',
+      showFormerly: false,
       // one letter of the wordmark picked out in terracotta; empty for none
       wordmarkAccentLetter: '',
     },
@@ -26,7 +26,7 @@ export const defaults = {
       whatsappLink: 'https://wa.me/message/4C2ID7G54JAIJ1',
       email: '',
     },
-    ticker: ['Dream Craft is now Mynsera', 'Now booking 2026–27 weddings', 'Handmade in Shillong', 'Shipping across India & abroad'],
+    ticker: ['Now booking 2026–27 weddings', 'Handmade in Shillong', 'Shipping across India & abroad'],
     footer: {
       startTitle: 'Start here',
       startText: "Tell us what you're planning. Upload your inspiration and get an approximate price in about two minutes.",
@@ -37,7 +37,7 @@ export const defaults = {
   home: {
     sections: ['make', 'process', 'gallery', 'packages', 'story', 'cta'],
     hero: {
-      eyebrow: 'Formerly Dream Craft · Shillong',
+      eyebrow: 'Bespoke · Handmade · Shillong',
       line1: 'Invitations,',
       line2: 'florals & keepsakes',
       line3: 'made by hand.',
@@ -85,8 +85,8 @@ export const defaults = {
       lede: 'Every suite is designed for you. These are starting prices; your quote reflects your exact design.',
     },
     story: {
-      eyebrow: 'A new name',
-      text: "Dream Craft is now Mynsera. Same studio in Shillong, same hands cutting, folding, wiring and packing every order. The name grew up; the care didn't change.",
+      eyebrow: 'The studio',
+      text: 'Everything here is cut, folded, wired and packed by hand in our Shillong studio. Small batches, made to order, so every piece belongs to one celebration and no other.',
       image: 'asset:boutonnieres-dried.jpg',
       imageAlt: 'Dried flower boutonnieres laid out in the studio',
       badge: 'now',
@@ -194,7 +194,7 @@ export const defaults = {
       sections: [
         {
           heading: 'Who we are',
-          body: 'Mynsera (formerly Dream Craft) is a stationery, florals and gifts studio in Shillong, Meghalaya, India. We decide how the information described here is used, and you can reach us on WhatsApp or by email through the links on this website.',
+          body: 'Mynsera is a stationery, florals and gifts studio in Shillong, Meghalaya, India. We decide how the information described here is used, and you can reach us on WhatsApp or by email through the links on this website.',
         },
         {
           heading: 'What we collect',
