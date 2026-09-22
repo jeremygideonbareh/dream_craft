@@ -4,13 +4,16 @@
 
    data-split="chars|words|lines"   masked text reveal on enter
    data-scrub-text                  words brighten as you scroll through
-   data-reveal="up|left|fade|scale" element reveal on enter
+   data-reveal="up|left|right|fade|scale"  element reveal on enter
    data-reveal-group                children reveal with a stagger
    data-img-reveal                  clip-path wipe + scale settle, then parallax
    data-count="18000"               number counts up on enter
    data-float="1|-1"                idle bobbing
    data-parallax="0.15"             scrubbed drift
    data-skew                        leans with scroll velocity
+   data-bg="#hex"                   page colour shifts to this while in view
+   data-drift="0.1"                 image drifts inside its frame as you pass
+   data-thread                      a line that draws itself as you scroll
    .ph .draw                        placeholder line-art draws itself
    ========================================================= */
 import { gsap, ScrollTrigger, SplitText, REDUCED, $$, inr } from './core';
@@ -62,6 +65,7 @@ export function reveals() {
   const from: Record<string, gsap.TweenVars> = {
     up: { y: 60, autoAlpha: 0 },
     left: { x: -40, autoAlpha: 0 },
+    right: { x: 40, autoAlpha: 0 },
     fade: { autoAlpha: 0 },
     scale: { scale: 0.86, autoAlpha: 0 },
   };
@@ -120,6 +124,40 @@ export function reveals() {
     const len = p.getTotalLength();
     gsap.fromTo(p, { strokeDasharray: len, strokeDashoffset: len }, {
       strokeDashoffset: 0, duration: 2, ease: 'power2.inOut', scrollTrigger: enter(p, 'top 90%'),
+    });
+  });
+
+  /* the page itself changes colour as you travel down it */
+  const bgSections = $$('[data-bg]');
+  if (bgSections.length) {
+    const body = document.body;
+    const base = getComputedStyle(body).backgroundColor;
+    bgSections.forEach((sec) => {
+      ScrollTrigger.create({
+        trigger: sec,
+        start: 'top 60%',
+        end: 'bottom 40%',
+        onToggle: (self) =>
+          gsap.to(body, { backgroundColor: self.isActive ? sec.dataset.bg! : base, duration: 0.8, ease: 'power2.out', overwrite: 'auto' }),
+      });
+    });
+  }
+
+  /* photographs drift inside their frames, so nothing sits perfectly still */
+  $$('[data-drift]').forEach((el) => {
+    const amt = +(el.dataset.drift || 0.08) * 100;
+    gsap.fromTo(el, { yPercent: -amt, scale: 1 + amt / 90 }, {
+      yPercent: amt, ease: 'none',
+      scrollTrigger: { trigger: el.parentElement || el, start: 'top bottom', end: 'bottom top', scrub: true },
+    });
+  });
+
+  /* hand-drawn threads that draw themselves as they cross the screen */
+  $$<SVGPathElement>('[data-thread] path').forEach((path) => {
+    const len = path.getTotalLength();
+    gsap.fromTo(path, { strokeDasharray: len, strokeDashoffset: len }, {
+      strokeDashoffset: 0, ease: 'none',
+      scrollTrigger: { trigger: path.closest('[data-thread]'), start: 'top 90%', end: 'bottom 55%', scrub: 0.6 },
     });
   });
 

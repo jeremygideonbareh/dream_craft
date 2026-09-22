@@ -32,7 +32,7 @@ const count = (id: string) => items.filter((g) => g.product === id).length;
     <div class="wrap">
       <div class="work__grid" id="workGrid" data-skew>
         {items.map((g) => (
-          <a class="tile" data-cat={g.product} href={url(`quote/?product=${g.product}&ref=${encodeURIComponent(g.id)}`)} data-cursor="Like this">
+          <a class="tile" data-cat={g.product} data-drift="0.05" href={url(`quote/?product=${g.product}&ref=${encodeURIComponent(g.id)}`)} data-cursor="Like this">
             <Pic src={g.image} alt={g.alt} widths={[360, 640]} sizes="(max-width: 600px) 46vw, (max-width: 1000px) 45vw, 30vw" />
             <span class="tile__cap">
               <span><b>{g.title}</b><small>{shortOf[g.product] ?? ''}</small></span>

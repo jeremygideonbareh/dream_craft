@@ -1,0 +1,15 @@
+---
+// A thread of "stitching" that draws itself as it crosses the screen,
+// used between sections so the scroll never feels like it stops moving.
+interface Props { flip?: boolean }
+const { flip = false } = Astro.props;
+---
+<div class="thread" data-thread aria-hidden="true" style={flip ? 'transform:scaleX(-1)' : undefined}>
+  <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+    <path d="M0 60 C 180 10, 300 110, 480 60 S 820 10, 1000 60 S 1140 95, 1200 55" />
+  </svg>
+  <svg class="thread__petal" viewBox="0 0 60 60">
+    <path d="M30 4c11 13 11 39 0 52C19 43 19 17 30 4Z" />
+    <path d="M4 30c13-11 39-11 52 0-13 11-39 11-52 0Z" />
+  </svg>
+</div>

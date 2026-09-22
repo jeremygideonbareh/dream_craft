@@ -8,12 +8,14 @@
 export const defaults = {
   settings: {
     brand: {
-      display: 'Mynséra',
+      display: 'Mynsera',
       formerly: 'Dream Craft',
       tagline: 'Invitations, florals & keepsakes, made by hand in Shillong',
       description:
-        'Mynséra (formerly Dream Craft) handcrafts custom wedding invitations, bouquets, boutonnieres, ring holders, cake toppers and personalised gifts in Shillong, Meghalaya. Get an approximate quote in minutes.',
+        'Mynsera (formerly Dream Craft) handcrafts custom wedding invitations, bouquets, boutonnieres, ring holders, cake toppers and personalised gifts in Shillong, Meghalaya. Get an approximate quote in minutes.',
       showFormerly: true,
+      // one letter of the wordmark picked out in terracotta; empty for none
+      wordmarkAccentLetter: '',
     },
     contact: {
       location: 'Shillong, Meghalaya',
@@ -24,7 +26,7 @@ export const defaults = {
       whatsappLink: 'https://wa.me/message/4C2ID7G54JAIJ1',
       email: '',
     },
-    ticker: ['Dream Craft is now Mynséra', 'Now booking 2026–27 weddings', 'Handmade in Shillong', 'Shipping across India & abroad'],
+    ticker: ['Dream Craft is now Mynsera', 'Now booking 2026–27 weddings', 'Handmade in Shillong', 'Shipping across India & abroad'],
     footer: {
       startTitle: 'Start here',
       startText: "Tell us what you're planning. Upload your inspiration and get an approximate price in about two minutes.",
@@ -84,7 +86,7 @@ export const defaults = {
     },
     story: {
       eyebrow: 'A new name',
-      text: "Dream Craft is now Mynséra. Same studio in Shillong, same hands cutting, folding, wiring and packing every order. The name grew up; the care didn't change.",
+      text: "Dream Craft is now Mynsera. Same studio in Shillong, same hands cutting, folding, wiring and packing every order. The name grew up; the care didn't change.",
       image: 'asset:boutonnieres-dried.jpg',
       imageAlt: 'Dried flower boutonnieres laid out in the studio',
       badge: 'now',
@@ -172,7 +174,7 @@ export const defaults = {
       { name: 'Navy', hex: '#1E2B4A' }, { name: 'Lilac', hex: '#B9A3CF' }, { name: 'Gold', hex: '#C9A45C' }, { name: 'Black', hex: '#1F1B18' },
     ],
     rushNote: "This date is soon, so it would be a rush order. We'll confirm we can make it in time.",
-    consentText: 'I agree that Mynséra may store these details and images to prepare my quote and contact me about it.',
+    consentText: 'I agree that Mynsera may store these details and images to prepare my quote and contact me about it.',
     successEyebrow: 'Enquiry received',
     successText: "We have everything we need: your images, details, date and budget. We'll review it and send your quotation.",
     nextSteps: [
@@ -192,7 +194,7 @@ export const defaults = {
       sections: [
         {
           heading: 'Who we are',
-          body: 'Mynséra (formerly Dream Craft) is a stationery, florals and gifts studio in Shillong, Meghalaya, India. We decide how the information described here is used, and you can reach us on WhatsApp or by email through the links on this website.',
+          body: 'Mynsera (formerly Dream Craft) is a stationery, florals and gifts studio in Shillong, Meghalaya, India. We decide how the information described here is used, and you can reach us on WhatsApp or by email through the links on this website.',
         },
         {
           heading: 'What we collect',
@@ -244,7 +246,7 @@ export const defaults = {
         },
         {
           heading: 'Confirming an order',
-          body: 'An order is confirmed when you approve the quotation in writing and pay the advance we agree. Your production slot is reserved from that point. [Mynséra: confirm the advance you take, for example 50%.]',
+          body: 'An order is confirmed when you approve the quotation in writing and pay the advance we agree. Your production slot is reserved from that point. [Mynsera: confirm the advance you take, for example 50%.]',
         },
         {
           heading: 'Design approval',
@@ -252,11 +254,11 @@ export const defaults = {
         },
         {
           heading: 'Making and delivery',
-          body: 'We will agree a production time with you when your order is confirmed. Orders needed sooner than our usual notice are treated as rush orders and carry an extra charge. Delivery is arranged through a third-party courier. Any delivery charges are told to you separately, and delays once a parcel is with the courier are outside our control. [Mynséra: confirm your usual production time.]',
+          body: 'We will agree a production time with you when your order is confirmed. Orders needed sooner than our usual notice are treated as rush orders and carry an extra charge. Delivery is arranged through a third-party courier. Any delivery charges are told to you separately, and delays once a parcel is with the courier are outside our control. [Mynsera: confirm your usual production time.]',
         },
         {
           heading: 'Changes and cancellation',
-          body: 'Tell us as soon as you can if something changes. Because everything is made to order for you, we may not be able to refund work already done or materials already bought. [Mynséra: confirm your cancellation terms.]',
+          body: 'Tell us as soon as you can if something changes. Because everything is made to order for you, we may not be able to refund work already done or materials already bought. [Mynsera: confirm your cancellation terms.]',
         },
         {
           heading: 'Handmade pieces',

@@ -5,10 +5,10 @@ import { loadContent } from '../../content/load';
 const { home } = await loadContent();
 const s = home.story;
 ---
-<section class="sec story" id="story">
+<section class="sec story" id="story" data-bg="#F7EEE3">
   <div class="wrap story__grid">
     <div class="story__media">
-      <div class="story__frame" data-img-reveal>
+      <div class="story__frame" data-img-reveal data-drift="0.06">
         <Pic src={s.image} alt={s.imageAlt} widths={[500, 900]} sizes="(max-width: 900px) 92vw, 40vw" />
       </div>
       {s.badge && <span class="story__badge" data-float="1"><em>{s.badge}</em><b><Wordmark /></b></span>}

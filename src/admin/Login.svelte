@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { signIn, signUp, resetPassword, toast } from './store.svelte';
+  import { signIn, signUp, resetPassword, toast, brandParts } from './store.svelte';
 
   let mode = $state<'in' | 'up' | 'reset'>('in');
   let email = $state('');
@@ -26,7 +26,7 @@
 
 <div class="login">
   <div class="login__box">
-    <p class="login__brand">myns<span>é</span>ra</p>
+    <p class="login__brand">{brandParts().before}<span>{brandParts().letter}</span>{brandParts().after}</p>
     <h1>{mode === 'up' ? 'Create your login' : mode === 'reset' ? 'Reset your password' : 'Studio sign in'}</h1>
 
     <form onsubmit={(e) => { e.preventDefault(); go(); }}>

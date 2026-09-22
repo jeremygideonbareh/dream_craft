@@ -1,4 +1,4 @@
-// Supabase project owned by the Mynséra account.
+// Supabase project owned by the Mynsera account.
 // The publishable key is designed to be public: it can only do what the
 // database's row-level security allows (upload reference images, call
 // submit_enquiry). Never put the secret / service_role key in this repo.

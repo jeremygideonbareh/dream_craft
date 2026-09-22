@@ -7,6 +7,7 @@ import Gallery from '../components/home/Gallery.astro';
 import Packages from '../components/home/Packages.astro';
 import Story from '../components/home/Story.astro';
 import Cta from '../components/home/Cta.astro';
+import Thread from '../components/Thread.astro';
 import { loadContent } from '../content/load';
 import { url } from '../lib/images';
 
@@ -73,9 +74,14 @@ const order = home.sections.filter((s): s is keyof typeof sections => s in secti
     </section>
   )}
 
-  {order.map((key) => {
+  {order.map((key, i) => {
     const Section = sections[key];
-    return <Section />;
+    return (
+      <>
+        {i > 0 && key !== 'gallery' && order[i - 1] !== 'gallery' && <Thread flip={i % 2 === 1} />}
+        <Section />
+      </>
+    );
   })}
 
   <script>

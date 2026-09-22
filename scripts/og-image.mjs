@@ -2,12 +2,19 @@
 // Instagram or Facebook. Re-run after a brand change:  node scripts/og-image.mjs
 import { writeFileSync } from 'node:fs';
 import sharp from 'sharp';
+import { defaults } from '../src/content/defaults.ts';
 
-const NAME = 'mynséra';
-const TAGLINE = 'Invitations, florals & keepsakes, made by hand';
-const PLACE = 'Shillong, Meghalaya · India';
+const { brand, contact } = defaults.settings;
+const NAME = brand.display.toLowerCase();
+const ACCENT = (brand.wordmarkAccentLetter || '').toLowerCase();
+const TAGLINE = brand.tagline;
+const PLACE = `${contact.location} · India`;
 
 const xml = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const at = ACCENT ? NAME.indexOf(ACCENT) : -1;
+const wordmark = at < 0
+  ? xml(NAME)
+  : `${xml(NAME.slice(0, at))}<tspan fill="#B85C38">${xml(NAME[at])}</tspan>${xml(NAME.slice(at + 1))}`;
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
@@ -27,7 +34,11 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
     <path d="M132 470c22 26 22 76 0 102-22-26-22-76 0-102Z"/>
     <path d="M81 521c26-22 76-22 102 0-26 22-76 22-102 0Z"/>
   </g>
-  <text x="90" y="300" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="150" fill="#33241B">myns<tspan fill="#B85C38">é</tspan>ra</text>
+  <text x="90" y="300" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="150" fill="#33241B">${
+    ACCENT && NAME.includes(ACCENT)
+      ? `${xml(NAME.slice(0, NAME.indexOf(ACCENT)))}<tspan fill="#B85C38">${ACCENT}</tspan>${xml(NAME.slice(NAME.indexOf(ACCENT) + 1))}`
+      : xml(NAME)
+  }</text>
   <text x="96" y="372" font-family="Helvetica, Arial, sans-serif" font-size="36" fill="#6B564A">${xml(TAGLINE)}</text>
   <text x="96" y="446" font-family="Helvetica, Arial, sans-serif" font-size="24" letter-spacing="5" fill="#B85C38">${xml(PLACE).toUpperCase()}</text>
   <rect x="96" y="486" width="150" height="3" fill="#B85C38"/>

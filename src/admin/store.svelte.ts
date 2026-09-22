@@ -23,6 +23,16 @@ export const app = $state({
   toast: '',
 });
 
+// brand name for the panel's own header, embedded by the admin page
+export const brand: { name: string; accent: string } = (() => {
+  try { return JSON.parse(document.getElementById('brandInfo')?.textContent || '{}'); } catch { return { name: '', accent: '' }; }
+})();
+export const brandParts = () => {
+  const name = (brand.name || 'studio').toLowerCase();
+  const i = brand.accent ? name.indexOf(brand.accent.toLowerCase()) : -1;
+  return i < 0 ? { before: name, letter: '', after: '' } : { before: name.slice(0, i), letter: name[i], after: name.slice(i + 1) };
+};
+
 export const isAdmin = () => app.me?.role === 'admin';
 export const canEdit = (key: string) => isAdmin() || STAFF_DOCS.includes(key as DocKey);
 

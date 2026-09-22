@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import { loadContent } from '../content/load';
 import { url } from '../lib/images';
 import { inr } from '../lib/pricing';
+import Thread from '../components/Thread.astro';
 
 const { pricing } = await loadContent();
 const r = pricing.rules;
@@ -16,7 +17,7 @@ const r = pricing.rules;
     </div>
   </section>
 
-  <section class="sec pk" style="padding-top:0">
+  <section class="sec pk" style="padding-top:0" data-bg="#F6EFE4">
     <div class="wrap">
       <div class="pk__grid" data-reveal-group>
         {pricing.packages.map((p) => (
@@ -32,19 +33,20 @@ const r = pricing.rules;
         ))}
       </div>
 
-      <div class="rules" data-reveal-group>
-        <div class="rule"><b>{inr(r.customFromPerInvite)}+</b><span>Custom invitations, per invite</span></div>
-        <div class="rule"><b>+{inr(r.foilNamesPerInvite)}</b><span>Foiled names, per invite</span></div>
-        <div class="rule"><b>+{inr(r.foilFullPerInvite)}</b><span>Full-page foiling, per invite</span></div>
-        <div class="rule"><b>{r.bulkDiscountPercent}% off</b><span>Custom invitations above {r.bulkDiscountAbove}</span></div>
-        <div class="rule"><b>+{inr(r.rushPerInvite)}</b><span>Rush orders, per invite</span></div>
-        <div class="rule"><b>{pricing.sizesLine}</b><span>{pricing.sizesText}</span></div>
+      <div class="rules">
+        <div class="rule" data-reveal="left"><b>{inr(r.customFromPerInvite)}+</b><span>Custom invitations, per invite</span></div>
+        <div class="rule" data-reveal="up"><b>+{inr(r.foilNamesPerInvite)}</b><span>Foiled names, per invite</span></div>
+        <div class="rule" data-reveal="right"><b>+{inr(r.foilFullPerInvite)}</b><span>Full-page foiling, per invite</span></div>
+        <div class="rule" data-reveal="left"><b>{r.bulkDiscountPercent}% off</b><span>Custom invitations above {r.bulkDiscountAbove}</span></div>
+        <div class="rule" data-reveal="up"><b>+{inr(r.rushPerInvite)}</b><span>Rush orders, per invite</span></div>
+        <div class="rule" data-reveal="right"><b>{pricing.sizesLine}</b><span>{pricing.sizesText}</span></div>
       </div>
       <p class="pk__note" data-reveal="fade">{pricing.disclaimer}<br />{pricing.deliveryNote}</p>
       <p class="pk__note" data-reveal="fade">{pricing.otherProductsNote} <a href={url('quote/')}>Start a quote →</a></p>
     </div>
   </section>
 
+  <Thread />
   {pricing.faqs.length > 0 && (
     <section class="sec" style="padding-top:0">
       <div class="wrap">

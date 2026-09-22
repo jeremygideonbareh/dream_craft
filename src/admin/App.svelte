@@ -4,7 +4,7 @@
   import Enquiries from './Enquiries.svelte';
   import Editor from './Editor.svelte';
   import Team from './Team.svelte';
-  import { app, initSession, signOut, isAdmin, unpublished, unsaved, publish } from './store.svelte';
+  import { app, initSession, signOut, isAdmin, unpublished, unsaved, publish, brandParts } from './store.svelte';
   import type { DocKey } from '../content/defaults';
 
   type Screen = { id: string; label: string; doc?: DocKey; title?: string; hint?: string; admin?: boolean };
@@ -60,7 +60,7 @@
 {:else}
   <div class="shell">
     <aside class="side">
-      <p class="side__brand"><span class="side__name">myns<span>é</span>ra</span><small>studio panel</small></p>
+      <p class="side__brand"><span class="side__name">{brandParts().before}<span>{brandParts().letter}</span>{brandParts().after}</span><small>studio panel</small></p>
       <nav>
         {#each visible as s}
           <button class="side__link" class:is-on={current.id === s.id} onclick={() => (screen = s.id)}>{s.label}</button>

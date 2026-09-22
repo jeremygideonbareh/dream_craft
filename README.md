@@ -1,6 +1,6 @@
-# mynséra (formerly Dream Craft)
+# mynsera (formerly Dream Craft)
 
-Website for **Mynséra**, a studio in Shillong, Meghalaya, making custom wedding invitations, florals and
+Website for **Mynsera**, a studio in Shillong, Meghalaya, making custom wedding invitations, florals and
 personalised pieces. Its main job is to collect and qualify custom enquiries: customers browse, press
 **Get a quote**, upload inspiration, choose their requirements and see an approximate price. The studio
 then receives one complete enquiry.
@@ -75,6 +75,9 @@ node scripts/seed-content.mjs          # regenerate supabase/seed-content.sql fr
 A failed build is deliberate: the host keeps the previous deploy live rather
 than publishing a site with missing content.
 
+The dev server reads the content once at start-up, so restart `npm run dev`
+after publishing changes from the admin panel to see them locally.
+
 ## Enquiries (Supabase)
 
 - The website can only **upload images** into `references/incoming/<session>/…` and **call
@@ -92,11 +95,11 @@ To apply the schema to a fresh project, run `supabase/migrations/*.sql` in the S
 
 ## Open items before launch
 
-- [ ] Confirm the brand spelling and casing (the site uses *mynséra* as the wordmark, *Mynséra* in text)
+- [ ] Confirm the brand spelling and casing (the site uses *mynsera* as the wordmark, *Mynsera* in text)
 - [ ] WhatsApp number (admin panel → Settings), so the hand-off after an enquiry is pre-filled
 - [ ] Pricing assumptions to confirm (admin panel → Pricing): rush window (30 days) and range width (+35%)
 - [ ] Full-resolution photos from the Instagram export (current images are 480 px and carry the old "Dream Craft" watermark)
-- [ ] Domain in Mynséra's name, plus hosting (Cloudflare Pages or Netlify) on Mynséra's account
+- [ ] Domain in Mynsera's name, plus hosting (Cloudflare Pages or Netlify) on Mynsera's account
 - [ ] Save the host's deploy hook so Publish rebuilds the site (see docs/admin-panel.md)
 - [ ] Create the first admin login, then invite the rest of the team
 - [ ] Email notifications: studio alert + customer confirmation (Resend + a Supabase Edge Function; needs the domain)
