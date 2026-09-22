@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import '../styles/quote.css';
 import ProductArt from '../components/ProductArt.astro';
 import { loadContent } from '../content/load';
-import { resolveImage } from '../lib/images';
+import { resolveImage, url } from '../lib/images';
 
 const { quote, products, gallery, pricing, settings } = await loadContent();
 const visible = products.filter((p) => p.visible);
@@ -151,6 +151,10 @@ const steps = ['Product', 'Inspiration', 'Details', 'Quantity', 'Date', 'Contact
             </div>
           </div>
           <label class="tick"><input type="checkbox" name="consent" required /><span>{quote.consentText}</span></label>
+          <p class="qz__legal">
+            <a href={url('privacy/')} target="_blank" rel="noopener">How we look after your details</a> ·
+            <a href={url('terms/')} target="_blank" rel="noopener">Terms</a>
+          </p>
           <p class="qz__err" data-err="name"></p>
           <p class="qz__err" data-err="phone"></p>
           <p class="qz__err" data-err="whatsapp"></p>

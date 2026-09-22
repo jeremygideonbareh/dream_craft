@@ -1,0 +1,43 @@
+---
+import Base from './Base.astro';
+import { loadContent } from '../content/load';
+import { whatsappLink } from '../lib/site';
+import { url } from '../lib/images';
+
+interface Props {
+  doc: { title: string; updated: string; intro: string; sections: { heading: string; body: string }[] };
+  page: 'privacy' | 'terms';
+}
+const { doc, page } = Astro.props;
+const { settings } = await loadContent();
+---
+<Base page={page} title={doc.title} description={doc.intro.slice(0, 180)}>
+  <section class="phead legal">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal="left"><i></i>{doc.title}</p>
+      <h1 class="h-lg" data-split="chars">{doc.title}</h1>
+      <p class="legal__updated">Last updated {doc.updated}</p>
+      <p class="lede" data-split="words">{doc.intro}</p>
+    </div>
+  </section>
+
+  <section class="sec legal__body" style="padding-top:0">
+    <div class="wrap">
+      <div class="prose">
+        {doc.sections.map((s) => (
+          <section data-reveal="up">
+            <h2>{s.heading}</h2>
+            <p>{s.body}</p>
+          </section>
+        ))}
+        <p class="prose__contact">
+          Questions about this page? Message us on
+          <a href={whatsappLink(settings.contact)} target="_blank" rel="noopener">WhatsApp</a>
+          {settings.contact.email && <> or email <a href={`mailto:${settings.contact.email}`}>{settings.contact.email}</a></>}.
+          <br />
+          <a href={url(page === 'privacy' ? 'terms/' : 'privacy/')}>{page === 'privacy' ? 'Terms' : 'Privacy notice'} →</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>

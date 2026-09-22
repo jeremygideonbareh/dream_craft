@@ -183,6 +183,97 @@ export const defaults = {
     whatsappButton: 'Continue on WhatsApp',
   },
 
+  legal: {
+    privacy: {
+      title: 'Privacy notice',
+      updated: 'September 2026',
+      intro:
+        'This notice explains what we collect when you ask us for a quote, why we keep it and what you can ask us to do with it. It is written plainly on purpose. If anything here is unclear, please ask.',
+      sections: [
+        {
+          heading: 'Who we are',
+          body: 'Mynséra (formerly Dream Craft) is a stationery, florals and gifts studio in Shillong, Meghalaya, India. We decide how the information described here is used, and you can reach us on WhatsApp or by email through the links on this website.',
+        },
+        {
+          heading: 'What we collect',
+          body: 'When you send an enquiry we collect your name, phone number, WhatsApp number and email address, along with what you would like made: the product, size, materials, finishing, colours, quantity, budget, your event date and location, and anything you write in the notes. We also keep the inspiration images you upload. Our website records which page you came from and whether you opened it from inside Instagram, which helps us understand how people find us. We do not use advertising or tracking cookies. Your half-finished answers are saved in your own browser so you can come back to them; they never leave your device until you press send.',
+        },
+        {
+          heading: 'Why we keep it',
+          body: 'We use it to prepare your quotation, to reply to you, and to make and deliver your order if you go ahead. We ask for your agreement before you send an enquiry, and you can withdraw it at any time by telling us.',
+        },
+        {
+          heading: 'Where it is kept',
+          body: 'Enquiries and images are stored in our database with Supabase, hosted in Tokyo, Japan. Your images are private: they cannot be viewed by anyone browsing the website, and only signed-in studio staff can open them. Access is limited to people who work with us, each with their own login.',
+        },
+        {
+          heading: 'How long we keep it',
+          body: 'We keep enquiries for up to two years, so we can pick up where we left off if you come back, and so we have a record of orders we have made. You can ask us to delete yours sooner.',
+        },
+        {
+          heading: 'Who else sees it',
+          body: 'We do not sell your details or share them for marketing. When you place an order we give a courier the delivery address so they can bring your parcel. Messages we exchange travel through WhatsApp or your email provider, as they would with any message.',
+        },
+        {
+          heading: 'Your choices',
+          body: 'You can ask us for a copy of what we hold, ask us to correct it, ask us to delete it, or withdraw your agreement. Write to us and we will do it. If you are not happy with how we have handled your information, tell us first and we will try to put it right; you also have the right to complain to the Data Protection Board of India.',
+        },
+        {
+          heading: 'Photographs of your order',
+          body: 'We love showing our work. If you would rather we did not photograph your order for Instagram or this website, just say so when you enquire and we will not.',
+        },
+        {
+          heading: 'Children',
+          body: 'This website is meant for adults arranging celebrations. We do not knowingly collect information from children.',
+        },
+        {
+          heading: 'Changes',
+          body: 'If we change how we handle your information we will update this page and change the date at the top.',
+        },
+      ],
+    },
+    terms: {
+      title: 'Terms',
+      updated: 'September 2026',
+      intro:
+        'These are the everyday terms of working with us. They are here so both sides know what to expect. Nothing here replaces what we agree with you in writing for your own order.',
+      sections: [
+        {
+          heading: 'Prices and quotations',
+          body: 'The price range shown on this website is approximate. It is there to help you plan, not to fix a price. Your final price depends on the actual design, materials and production required, and is confirmed in the written quotation we send you. A quotation is valid for 30 days.',
+        },
+        {
+          heading: 'Confirming an order',
+          body: 'An order is confirmed when you approve the quotation in writing and pay the advance we agree. Your production slot is reserved from that point. [Mynséra: confirm the advance you take, for example 50%.]',
+        },
+        {
+          heading: 'Design approval',
+          body: 'We send you a proof to approve before we make anything. Please check names, dates, spellings and wording carefully, because we make exactly what is approved. Changes after approval may add cost and time.',
+        },
+        {
+          heading: 'Making and delivery',
+          body: 'We will agree a production time with you when your order is confirmed. Orders needed sooner than our usual notice are treated as rush orders and carry an extra charge. Delivery is arranged through a third-party courier. Any delivery charges are told to you separately, and delays once a parcel is with the courier are outside our control. [Mynséra: confirm your usual production time.]',
+        },
+        {
+          heading: 'Changes and cancellation',
+          body: 'Tell us as soon as you can if something changes. Because everything is made to order for you, we may not be able to refund work already done or materials already bought. [Mynséra: confirm your cancellation terms.]',
+        },
+        {
+          heading: 'Handmade pieces',
+          body: 'Everything is made by hand, so small variations are natural and are part of the character of the work. Flowers, papers and colours can differ slightly from photographs, and screens show colour differently.',
+        },
+        {
+          heading: 'Designs',
+          body: 'Designs we create stay ours, and we may show finished work in our portfolio and on Instagram unless you ask us not to. Anything you send us, such as artwork or a monogram, stays yours, and by sending it you confirm you are allowed to use it.',
+        },
+        {
+          heading: 'Where we are',
+          body: 'We are based in Shillong, Meghalaya, and Indian law applies to our work together.',
+        },
+      ],
+    },
+  },
+
   products: [
     {
       id: 'invitations', visible: true, title: 'Wedding invitations', short: 'Invitations',

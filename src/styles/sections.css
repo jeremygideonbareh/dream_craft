@@ -216,6 +216,18 @@ html.js [data-hero-lede]{visibility:hidden}
 .faq__body p{padding:0 0 1.4rem;color:var(--ink-2);max-width:62ch}
 
 /* =========================================================
+   LEGAL PAGES
+   ========================================================= */
+.legal__updated{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2);margin-top:1rem}
+.legal .lede{margin-top:1rem;max-width:60ch}
+.prose{max-width:68ch}
+.prose section{padding:1.6rem 0;border-bottom:1px solid var(--line)}
+.prose h2{font-size:clamp(1.2rem,2.2vw,1.6rem);margin-bottom:.6rem}
+.prose p{color:var(--ink-2);line-height:1.75}
+.prose__contact{padding-top:1.6rem;color:var(--ink-2)}
+.prose a{color:var(--terra);text-decoration:underline;text-underline-offset:3px}
+
+/* =========================================================
    REDUCED MOTION: final states, native scrolling
    ========================================================= */
 html.reduced .gal__pin{height:auto;padding:5rem 0}

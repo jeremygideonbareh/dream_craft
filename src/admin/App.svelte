@@ -17,6 +17,7 @@
     { id: 'work', label: 'Work page', doc: 'work', title: 'Work page', admin: true },
     { id: 'pricing', label: 'Pricing', doc: 'pricing', title: 'Packages & pricing', hint: 'Package prices, add-on rules and the questions shown on the pricing page. The quote estimate uses these numbers.', admin: true },
     { id: 'quotepage', label: 'Quote form', doc: 'quote', title: 'Quote form wording', hint: 'Step headings, budget ranges, occasions, colours and the thank-you screen.', admin: true },
+    { id: 'legal', label: 'Privacy & terms', doc: 'legal', title: 'Privacy notice & terms', hint: 'The two legal pages. Anything in square brackets is a decision for you to confirm.', admin: true },
     { id: 'settings', label: 'Settings', doc: 'settings', title: 'Brand & contact', hint: 'Name, tagline, WhatsApp number, Instagram, the announcement bar and the footer.', admin: true },
     { id: 'team', label: 'Team', admin: true },
   ];

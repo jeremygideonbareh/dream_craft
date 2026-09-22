@@ -1,0 +1,6 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { loadContent } from '../content/load';
+const { legal } = await loadContent();
+---
+<Legal doc={legal.privacy} page="privacy" />
