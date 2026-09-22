@@ -1,0 +1,20 @@
+---
+// The brand name as a lowercase italic wordmark. The first accented letter
+// (the é in mynséra) is picked out in terracotta. Follows the name in settings.
+// `split` wraps each letter so the loader can animate them.
+import { loadContent } from '../content/load';
+
+interface Props { split?: boolean; class?: string }
+const { split = false, class: cls = '' } = Astro.props;
+const { settings } = await loadContent();
+const name = settings.brand.display.toLowerCase();
+const letters = [...name];
+const acc = letters.findIndex((l) => /[^\x00-\x7F]/.test(l));
+---
+<span class={`wordmark ${cls}`} aria-label={name}>
+  {split
+    ? letters.map((l, i) => <span class={i === acc ? 'acc' : undefined} aria-hidden="true">{l}</span>)
+    : acc < 0
+      ? name
+      : <>{name.slice(0, acc)}<span class="acc">{letters[acc]}</span>{letters.slice(acc + 1).join('')}</>}
+</span>

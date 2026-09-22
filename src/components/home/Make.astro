@@ -1,0 +1,37 @@
+---
+import ProductArt from '../ProductArt.astro';
+import { loadContent } from '../../content/load';
+import { url } from '../../lib/images';
+const { home, products } = await loadContent();
+const m = home.make;
+const list = products.filter((p) => p.visible);
+---
+<section class="sec make" id="make">
+  <div class="wrap">
+    <header class="sec__head">
+      <div>
+        <p class="eyebrow" data-reveal="left"><i></i>{m.eyebrow}</p>
+        <h2 class="h-lg" data-split="chars">{m.title} <span class="it">{m.titleAccent}</span></h2>
+      </div>
+      <p class="lede" data-split="words">{m.lede}</p>
+    </header>
+    <ol class="stack" data-stack>
+      {list.map((p, i) => (
+        <li class="stack__card" data-stack-card style={`--i:${i}`}>
+          <div class="stack__inner">
+            <div class="stack__copy">
+              <span class="stack__num">{String(i + 1).padStart(2, '0')} / {list.length}</span>
+              <h3 class="h-md">{p.title}</h3>
+              <p>{p.blurb}</p>
+              {p.variants.length > 0 && <ul class="stack__chips">{p.variants.map((v) => <li class="chip">{v.label}</li>)}</ul>}
+              <a href={url(`quote/?product=${p.id}`)} class="btn btn--quote btn--sm magnetic" data-cursor="Quote">
+                <span>Quote {p.short.toLowerCase()}</span><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
+              </a>
+            </div>
+            <div class="stack__media" data-stack-media><ProductArt product={p} /></div>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

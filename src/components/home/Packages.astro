@@ -1,0 +1,38 @@
+---
+import { loadContent } from '../../content/load';
+import { url } from '../../lib/images';
+import { inr } from '../../lib/pricing';
+const { home, pricing } = await loadContent();
+const h = home.packages;
+const r = pricing.rules;
+---
+<section class="sec pk" id="packages">
+  <div class="wrap">
+    <header class="sec__head sec__head--center">
+      <p class="eyebrow" data-reveal="fade"><i></i>{h.eyebrow}</p>
+      <h2 class="h-lg" data-split="chars">{h.title} <span class="it">{h.titleAccent}</span></h2>
+      <p class="lede" data-split="words">{h.lede}</p>
+    </header>
+    <div class="pk__grid" data-reveal-group>
+      {pricing.packages.map((p) => (
+        <article class:list={['pk__card', { 'is-featured': p.featured }]} data-tilt>
+          {p.featured && <span class="pk__tag">{pricing.featuredLabel}</span>}
+          <h3>{p.name}</h3>
+          <p class="pk__from">starting</p>
+          <p class="pk__price">₹<span data-count={p.from}>{p.from.toLocaleString('en-IN')}</span></p>
+          <p class="pk__qty">for {p.qty} invites</p>
+          <p class="pk__blurb">{p.blurb}</p>
+          <a href={url(`quote/?product=invitations&tier=${p.id}`)} class:list={['btn btn--sm magnetic', p.featured ? 'btn--light' : 'btn--ghost']} data-cursor="Quote"><span>Quote {p.name}</span></a>
+        </article>
+      ))}
+    </div>
+    <ul class="pk__extras" data-reveal-group>
+      <li class="chip">Custom invites from {inr(r.customFromPerInvite)} each</li>
+      <li class="chip">Foil names +{inr(r.foilNamesPerInvite)} each</li>
+      <li class="chip">Full-page foil +{inr(r.foilFullPerInvite)} each</li>
+      <li class="chip">Rush orders +{inr(r.rushPerInvite)} each</li>
+      <li class="chip">{r.bulkDiscountPercent}% off custom invites over {r.bulkDiscountAbove}</li>
+    </ul>
+    <p class="pk__note" data-reveal="fade">{pricing.disclaimer} <a href={url('pricing/')}>Full pricing →</a></p>
+  </div>
+</section>

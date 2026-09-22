@@ -1,0 +1,201 @@
+---
+import { getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import '../styles/quote.css';
+import ProductArt from '../components/ProductArt.astro';
+import { loadContent } from '../content/load';
+import { resolveImage } from '../lib/images';
+
+const { quote, products, gallery, pricing, settings } = await loadContent();
+const visible = products.filter((p) => p.visible);
+
+// Thumbnails of our own work, so "Quote something like this" links arrive
+// with the picture already attached.
+const thumbs: Record<string, { src: string; product: string }> = {};
+for (const g of gallery.filter((x) => x.visible)) {
+  const img = resolveImage(g.image);
+  if (!img) continue;
+  const built = typeof img === 'string'
+    ? await getImage({ src: img, width: 240, format: 'webp', inferSize: true })
+    : await getImage({ src: img, width: 240, format: 'webp' });
+  thumbs[g.id] = { src: built.src, product: g.product };
+}
+
+// everything the wizard needs in the browser
+const wizard = {
+  products: visible,
+  pricing: { packages: pricing.packages, rules: pricing.rules },
+  copy: quote,
+  brand: settings.brand.display,
+  contact: settings.contact,
+  thumbs,
+};
+
+const steps = ['Product', 'Inspiration', 'Details', 'Quantity', 'Date', 'Contact', 'Review'];
+---
+<Base page="quote" title="Get a quote" description={`${quote.sub} ${settings.brand.description}`}>
+  <section class="qz" id="quote">
+    <div class="qz__wrap">
+      <header class="qz__head">
+        <p class="eyebrow" data-reveal="left"><i></i>{quote.eyebrow}</p>
+        <h1 class="h-lg" data-split="chars">{quote.title} <span class="it">{quote.titleAccent}</span></h1>
+        <p class="qz__sub">{quote.sub}</p>
+      </header>
+
+      <div class="qz__progress" aria-hidden="true">
+        {steps.map((s, i) => <div data-dot={i}><span>{i + 1}</span><em>{s}</em></div>)}
+        <i class="qz__bar"><b id="qzBar"></b></i>
+      </div>
+
+      <form id="qz" class="qz__form" novalidate autocomplete="on">
+        <label class="qz__hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off" /></label>
+
+        <fieldset class="qz__step" data-step="0">
+          <legend class="qz__title" tabindex="-1">{quote.stepProduct}</legend>
+          <div class="qz__products">
+            {visible.map((p) => (
+              <label class="qp">
+                <input type="radio" name="product" value={p.id} required />
+                <span class="qp__img"><ProductArt product={p} sizes="(max-width: 600px) 45vw, 200px" /></span>
+                <span class="qp__name">{p.title}</span>
+              </label>
+            ))}
+          </div>
+          <p class="qz__err" data-err="product"></p>
+        </fieldset>
+
+        <fieldset class="qz__step" data-step="1" hidden>
+          <legend class="qz__title" tabindex="-1">{quote.stepInspiration}</legend>
+          <p class="qz__hint">{quote.inspirationHint}</p>
+          <div class="up" id="upZone">
+            <input type="file" id="upInput" accept="image/*" multiple class="sr-only" />
+            <label for="upInput" class="up__drop" data-cursor="Upload">
+              <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 32V12M15 20l9-9 9 9M10 30v6a4 4 0 0 0 4 4h20a4 4 0 0 0 4-4v-6" /></svg>
+              <b>Tap to add images</b>
+              <span>or drag them here · JPG, PNG, HEIC · max 10 MB each</span>
+            </label>
+            <ul class="up__list" id="upList" aria-live="polite"></ul>
+          </div>
+          <label class="fld">
+            <span>Describe your idea <small>(optional)</small></span>
+            <textarea name="notes" rows="3" maxlength="2000" placeholder={quote.notesPlaceholder}></textarea>
+          </label>
+        </fieldset>
+
+        <fieldset class="qz__step" data-step="2" hidden>
+          <legend class="qz__title" tabindex="-1">{quote.stepDetails}</legend>
+          <div id="details"></div>
+          <div class="grp">
+            <p class="grp__label">Colours <small>(pick any)</small></p>
+            <div class="sw">
+              {quote.colours.map((c) => (
+                <label class="sw__item"><input type="checkbox" name="colours" value={c.name} /><i style={`--c:${c.hex}`}></i><span>{c.name}</span></label>
+              ))}
+            </div>
+            <label class="fld fld--inline"><span class="sr-only">Other colours</span><input name="colourNotes" maxlength="200" placeholder="Other colours or a Pantone / hex code" /></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="qz__step" data-step="3" hidden>
+          <legend class="qz__title" tabindex="-1">{quote.stepQuantity}</legend>
+          <div class="grp">
+            <p class="grp__label">How many <span id="qtyUnit">pieces</span>?</p>
+            <div class="qty">
+              <button type="button" class="qty__btn" data-qty="-1" aria-label="Fewer">−</button>
+              <input type="number" name="quantity" id="qty" inputmode="numeric" min="1" max="100000" value="1" required aria-label="Quantity" />
+              <button type="button" class="qty__btn" data-qty="1" aria-label="More">+</button>
+            </div>
+            <div class="qty__quick" id="qtyQuick"></div>
+            <p class="qz__err" data-err="quantity"></p>
+          </div>
+          <div class="grp">
+            <p class="grp__label">Your budget</p>
+            <div class="chips">
+              {quote.budgets.map((b) => <label class="ch"><input type="radio" name="budget" value={b} required /><span>{b}</span></label>)}
+            </div>
+            <p class="qz__err" data-err="budget"></p>
+          </div>
+        </fieldset>
+
+        <fieldset class="qz__step" data-step="4" hidden>
+          <legend class="qz__title" tabindex="-1">{quote.stepDate}</legend>
+          <div class="grp">
+            <p class="grp__label">Occasion</p>
+            <div class="chips">
+              {quote.occasions.map((o, i) => <label class="ch"><input type="radio" name="occasion" value={o} checked={i === 0} /><span>{o}</span></label>)}
+            </div>
+          </div>
+          <div class="fld-row">
+            <label class="fld"><span>Wedding / event date</span><input type="date" name="eventDate" id="eventDate" required /></label>
+            <label class="fld"><span>Location (city / venue)</span><input name="location" required maxlength="160" autocomplete="address-level2" placeholder="e.g. Shillong, Meghalaya" /></label>
+          </div>
+          <label class="tick"><input type="checkbox" name="dateFlexible" /><span>My date isn't fixed yet</span></label>
+          <p class="qz__note qz__note--warn" id="rushNote" hidden>{quote.rushNote}</p>
+          <p class="qz__err" data-err="eventDate"></p>
+          <p class="qz__err" data-err="location"></p>
+        </fieldset>
+
+        <fieldset class="qz__step" data-step="5" hidden>
+          <legend class="qz__title" tabindex="-1">{quote.stepContact}</legend>
+          <div class="fld-row">
+            <label class="fld"><span>Your name</span><input name="name" required maxlength="120" autocomplete="name" /></label>
+            <label class="fld"><span>Phone number</span><input name="phone" type="tel" required inputmode="tel" autocomplete="tel" placeholder="+91 98765 43210" /></label>
+          </div>
+          <label class="tick"><input type="checkbox" name="waSame" checked /><span>This number is on WhatsApp</span></label>
+          <label class="fld" id="waField" hidden><span>WhatsApp number</span><input name="whatsapp" type="tel" inputmode="tel" placeholder="+91 …" /></label>
+          <label class="fld"><span>Email <small>(for your copy of the enquiry)</small></span><input name="email" type="email" required autocomplete="email" inputmode="email" /></label>
+          <div class="grp">
+            <p class="grp__label">Best way to reach you</p>
+            <div class="chips">
+              {['WhatsApp', 'Phone call', 'Email'].map((c, i) => <label class="ch"><input type="radio" name="contactPref" value={c} checked={i === 0} /><span>{c}</span></label>)}
+            </div>
+          </div>
+          <label class="tick"><input type="checkbox" name="consent" required /><span>{quote.consentText}</span></label>
+          <p class="qz__err" data-err="name"></p>
+          <p class="qz__err" data-err="phone"></p>
+          <p class="qz__err" data-err="whatsapp"></p>
+          <p class="qz__err" data-err="email"></p>
+          <p class="qz__err" data-err="consent"></p>
+        </fieldset>
+
+        <fieldset class="qz__step" data-step="6" hidden>
+          <legend class="qz__title" tabindex="-1">{quote.stepReview}</legend>
+          <dl class="rev" id="review"></dl>
+          <p class="qz__err qz__err--big" data-err="submit"></p>
+        </fieldset>
+
+        <aside class="est" id="est" hidden aria-live="polite">
+          <p class="est__label">Approximate price</p>
+          <p class="est__range"><span id="estLow">₹0</span> – <span id="estHigh">₹0</span></p>
+          <ul class="est__lines" id="estLines"></ul>
+          <p class="est__note">{pricing.disclaimer}</p>
+        </aside>
+
+        <div class="qz__nav">
+          <button type="button" class="btn btn--ghost" id="qzBack" hidden><span>Back</span></button>
+          <button type="button" class="btn btn--quote" id="qzNext" data-cursor="Next"><span>Continue</span><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" /></svg></button>
+        </div>
+      </form>
+
+      <section class="done" id="done" hidden tabindex="-1" aria-labelledby="doneTitle">
+        <svg class="done__tick" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="36" /><path d="M24 41l11 11 22-24" /></svg>
+        <p class="eyebrow"><i></i>{quote.successEyebrow}</p>
+        <h2 class="h-lg" id="doneTitle">Thank you, <span class="it" id="doneName"></span></h2>
+        <p class="done__ref">Your reference <b id="doneRef">MYN-0000</b></p>
+        <p class="lede">{quote.successText}</p>
+        <ol class="done__next">
+          {quote.nextSteps.map((s) => <li>{s}</li>)}
+        </ol>
+        <div class="done__btns">
+          <a class="btn btn--quote" id="doneWa" target="_blank" rel="noopener"><span>{quote.whatsappButton}</span><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" /></svg></a>
+          <a class="link" href="./" id="doneAgain">Start another enquiry</a>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <script type="application/json" id="qzData" set:html={JSON.stringify(wizard)}></script>
+  <script>
+    import '../scripts/quote';
+  </script>
+</Base>

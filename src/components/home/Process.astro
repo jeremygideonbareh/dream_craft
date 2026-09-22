@@ -1,0 +1,27 @@
+---
+import { loadContent } from '../../content/load';
+import { url } from '../../lib/images';
+const { home } = await loadContent();
+const p = home.process;
+---
+<section class="sec process" id="process">
+  <div class="wrap process__grid">
+    <div class="process__intro">
+      <p class="eyebrow" data-reveal="left"><i></i>{p.eyebrow}</p>
+      <h2 class="h-lg" data-split="chars">{p.title} <span class="it">{p.titleAccent}</span></h2>
+      <p class="lede" data-split="words">{p.lede}</p>
+      <a href={url('quote/')} class="btn btn--quote magnetic" data-reveal="up" data-cursor="Start"><span>{p.button}</span><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" /></svg></a>
+    </div>
+    <div class="process__steps" data-process>
+      <span class="process__rail" aria-hidden="true"><i data-process-fill></i></span>
+      <ol>
+        {p.steps.map((s, i) => (
+          <li class="process__step" data-process-step>
+            <span class="process__dot">{i + 1}</span>
+            <div><h3>{s.title}</h3><p>{s.text}</p></div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>

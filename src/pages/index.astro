@@ -1,0 +1,84 @@
+---
+import Base from '../layouts/Base.astro';
+import Pic from '../components/Pic.astro';
+import Make from '../components/home/Make.astro';
+import Process from '../components/home/Process.astro';
+import Gallery from '../components/home/Gallery.astro';
+import Packages from '../components/home/Packages.astro';
+import Story from '../components/home/Story.astro';
+import Cta from '../components/home/Cta.astro';
+import { loadContent } from '../content/load';
+import { url } from '../lib/images';
+
+const { home, products } = await loadContent();
+const h = home.hero;
+const marquee = products.filter((p) => p.visible).map((p) => p.short);
+// admins can reorder or remove sections in the admin panel
+const sections = { make: Make, process: Process, gallery: Gallery, packages: Packages, story: Story, cta: Cta };
+const order = home.sections.filter((s): s is keyof typeof sections => s in sections);
+---
+<Base page="home">
+
+  <section class="hero" id="hero">
+    <div class="hero__bloom" aria-hidden="true"></div>
+    <div class="hero__grid">
+      <div class="hero__copy">
+        <p class="eyebrow" data-intro><i></i>{h.eyebrow}</p>
+        <h1 class="hero__title h-xl">
+          <span class="line"><span data-hero-line>{h.line1}</span></span>{' '}
+          <span class="line"><span data-hero-line class="it">{h.line2}</span></span>{' '}
+          <span class="line"><span data-hero-line>{h.line3}</span></span>
+        </h1>
+        <p class="hero__lede lede" data-hero-lede>{h.lede}</p>
+        <div class="hero__cta">
+          <a href={url('quote/')} class="btn btn--quote magnetic" data-intro data-cursor="Start">
+            <span>{h.primaryButton}</span><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
+          </a>
+          <a href={url('work/')} class="btn btn--ghost magnetic" data-intro data-cursor="Browse"><span>{h.secondaryButton}</span></a>
+        </div>
+        {h.trust.length > 0 && (
+          <ul class="hero__trust" data-intro>
+            {h.trust.map((t) => <li><b>{t.value}</b><span>{t.label}</span></li>)}
+          </ul>
+        )}
+      </div>
+
+      <div class="hero__media" data-hero-media>
+        <div class="hero__arch" data-hero-img>
+          <Pic src={h.image} alt={h.imageAlt} widths={[600, 900, 1300]} sizes="(max-width: 900px) 92vw, 46vw" eager />
+          <div class="hero__shine" aria-hidden="true"></div>
+        </div>
+        {h.cards.map((c, i) => (
+          <div class:list={['hero__card', i === 0 ? 'hero__card--a' : 'hero__card--b']} data-float={i === 0 ? '1' : '-1'} data-depth={i === 0 ? '1.6' : '2.2'}>
+            <Pic src={c.image} alt="" widths={[120]} sizes="60px" />
+            <p><b>{c.title}</b><span>{c.text}</span></p>
+          </div>
+        ))}
+        <svg class="hero__petal hero__petal--1" data-depth="3" viewBox="0 0 60 60" aria-hidden="true"><path d="M30 2c12 14 12 42 0 56C18 44 18 16 30 2Z" /><path d="M2 30c14-12 42-12 56 0-14 12-42 12-56 0Z" /></svg>
+        <svg class="hero__petal hero__petal--2" data-depth="-2" viewBox="0 0 60 60" aria-hidden="true"><path d="M30 2c12 14 12 42 0 56C18 44 18 16 30 2Z" /><path d="M2 30c14-12 42-12 56 0-14 12-42 12-56 0Z" /></svg>
+        <svg class="hero__petal hero__petal--3" data-depth="2.6" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="26" /><circle cx="30" cy="30" r="12" /></svg>
+      </div>
+    </div>
+    <div class="hero__scroll" data-intro aria-hidden="true"><span>Scroll</span><i></i></div>
+  </section>
+
+  {marquee.length > 0 && (
+    <section class="strip" aria-label="What we make">
+      <div class="strip__row" data-marquee="1">
+        <div class="strip__set">{marquee.map((m) => <><span>{m}</span><em>✦</em></>)}</div>
+      </div>
+      <div class="strip__row strip__row--alt" data-marquee="-1" aria-hidden="true">
+        <div class="strip__set">{[...marquee].reverse().map((m) => <><span>{m}</span><em>✦</em></>)}</div>
+      </div>
+    </section>
+  )}
+
+  {order.map((key) => {
+    const Section = sections[key];
+    return <Section />;
+  })}
+
+  <script>
+    import '../scripts/motion/home';
+  </script>
+</Base>

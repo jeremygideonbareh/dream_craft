@@ -1,0 +1,25 @@
+---
+// A product's photo, or drawn line-art until photos are added in the admin.
+import Pic from './Pic.astro';
+import type { ProductDoc } from '../content/defaults';
+
+interface Props { product: ProductDoc; sizes?: string; eager?: boolean }
+const { product, sizes = '(max-width: 900px) 92vw, 44vw', eager = false } = Astro.props;
+const file = product.images[0];
+
+const icons: Record<string, string> = {
+  banners: 'M8 20h84M14 20l8 26 8-26M38 20l8 26 8-26M62 20l8 26 8-26',
+  pinata: 'M30 70 40 30h20l10 40zM40 30l-6-14M60 30l6-14M50 70v14M44 84h12',
+  props: 'M20 80V30h60v50zM20 30l30-14 30 14M40 80V52h20v28',
+  hymnals: 'M50 26C40 20 26 20 16 24v56c10-4 24-4 34 2 10-6 24-6 34-2V24c-10-4-24-4-34 2zM50 26v56',
+};
+const petal = 'M50 10c16 18 16 62 0 80-16-18-16-62 0-80ZM10 50c18-16 62-16 80 0-18 16-62 16-80 0Z';
+---
+{file ? (
+  <Pic src={file} alt={product.title} widths={[480, 800, 1200]} sizes={sizes} eager={eager} />
+) : (
+  <div class="ph" role="img" aria-label={`${product.title}, photos coming soon`}>
+    <svg viewBox="0 0 100 100" aria-hidden="true"><path class="draw" d={icons[product.id] ?? petal} /></svg>
+    <b>Photos coming soon</b>
+  </div>
+)}

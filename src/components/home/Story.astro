@@ -1,0 +1,21 @@
+---
+import Pic from '../Pic.astro';
+import Wordmark from '../Wordmark.astro';
+import { loadContent } from '../../content/load';
+const { home } = await loadContent();
+const s = home.story;
+---
+<section class="sec story" id="story">
+  <div class="wrap story__grid">
+    <div class="story__media">
+      <div class="story__frame" data-img-reveal>
+        <Pic src={s.image} alt={s.imageAlt} widths={[500, 900]} sizes="(max-width: 900px) 92vw, 40vw" />
+      </div>
+      {s.badge && <span class="story__badge" data-float="1"><em>{s.badge}</em><b><Wordmark /></b></span>}
+    </div>
+    <div class="story__copy">
+      <p class="eyebrow" data-reveal="left"><i></i>{s.eyebrow}</p>
+      <p class="story__text" data-scrub-text>{s.text}</p>
+    </div>
+  </div>
+</section>

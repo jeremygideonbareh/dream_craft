@@ -1,0 +1,19 @@
+---
+import { loadContent } from '../../content/load';
+import { url } from '../../lib/images';
+import { whatsappLink } from '../../lib/site';
+const { home, settings } = await loadContent();
+const c = home.cta;
+---
+<section class="cta" id="cta">
+  <div class="cta__panel" data-cta>
+    <p class="eyebrow"><i></i>{c.eyebrow}</p>
+    <h2 class="cta__title" data-split="chars">{c.title} <span class="it">{c.titleAccent}</span></h2>
+    <p class="lede" data-split="words">{c.lede}</p>
+    <div class="cta__btns">
+      <a href={url('quote/')} class="btn btn--light magnetic" data-cursor="Start"><span>{c.button}</span><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" /></svg></a>
+      <a href={whatsappLink(settings.contact)} target="_blank" rel="noopener" class="link link--light">{c.whatsappLabel} <i>↗</i></a>
+    </div>
+    <svg class="cta__leaf" viewBox="0 0 80 80" aria-hidden="true"><path d="M40 6c14 18 14 50 0 68C26 56 26 24 40 6Z" /><path d="M6 40c18-14 50-14 68 0-18 14-50 14-68 0Z" /></svg>
+  </div>
+</section>

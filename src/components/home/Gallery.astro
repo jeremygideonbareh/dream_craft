@@ -1,0 +1,25 @@
+---
+import Pic from '../Pic.astro';
+import { loadContent } from '../../content/load';
+import { url } from '../../lib/images';
+const { home, gallery } = await loadContent();
+const g = home.gallery;
+const items = gallery.filter((x) => x.visible);
+---
+<section class="gal" id="gallery">
+  <div class="gal__pin">
+    <div class="gal__head">
+      <h2 class="h-lg" data-split="chars">{g.title} <span class="it">{g.titleAccent}</span></h2>
+      <a href={url('work/')} class="link link--light magnetic" data-cursor="All">{g.link} <i>→</i></a>
+    </div>
+    <div class="gal__track" id="galTrack">
+      {items.map((x) => (
+        <a class="gal__item" href={url(`quote/?product=${x.product}&ref=${encodeURIComponent(x.id)}`)} data-cursor="Like this">
+          <div class="gal__img"><Pic src={x.image} alt={x.alt} widths={[400, 700]} sizes="(max-width: 900px) 72vw, 26vw" /></div>
+          <span class="gal__cap"><b>{x.title}</b><span>{g.itemHint}</span></span>
+        </a>
+      ))}
+    </div>
+    <div class="gal__bar" aria-hidden="true"><i id="galBar"></i></div>
+  </div>
+</section>

@@ -1,0 +1,298 @@
+// Every piece of editable site content, as it stood before the admin panel.
+// These documents seed Supabase, define the shape the admin editor shows,
+// and fill any gap if a published document is missing a field.
+//
+// Images are either "asset:<file>" (bundled in src/assets/img) or a full URL
+// to the site-media bucket (uploaded from the admin panel).
+
+export const defaults = {
+  settings: {
+    brand: {
+      display: 'Mynséra',
+      formerly: 'Dream Craft',
+      tagline: 'Invitations, florals & keepsakes, made by hand in Shillong',
+      description:
+        'Mynséra (formerly Dream Craft) handcrafts custom wedding invitations, bouquets, boutonnieres, ring holders, cake toppers and personalised gifts in Shillong, Meghalaya. Get an approximate quote in minutes.',
+      showFormerly: true,
+    },
+    contact: {
+      location: 'Shillong, Meghalaya',
+      shipping: 'Shipping across India & abroad',
+      instagramHandle: '@dreamcraft',
+      instagramUrl: 'https://www.instagram.com/dreamcraft',
+      whatsappNumber: '',
+      whatsappLink: 'https://wa.me/message/4C2ID7G54JAIJ1',
+      email: '',
+    },
+    ticker: ['Dream Craft is now Mynséra', 'Now booking 2026–27 weddings', 'Handmade in Shillong', 'Shipping across India & abroad'],
+    footer: {
+      startTitle: 'Start here',
+      startText: "Tell us what you're planning. Upload your inspiration and get an approximate price in about two minutes.",
+      madeIn: 'Handmade in Meghalaya',
+    },
+  },
+
+  home: {
+    sections: ['make', 'process', 'gallery', 'packages', 'story', 'cta'],
+    hero: {
+      eyebrow: 'Formerly Dream Craft · Shillong',
+      line1: 'Invitations,',
+      line2: 'florals & keepsakes',
+      line3: 'made by hand.',
+      lede: 'Custom wedding stationery, bouquets and personalised pieces. Share your idea and get an approximate quote in about two minutes.',
+      primaryButton: 'Get a quote',
+      secondaryButton: 'See our work',
+      image: 'asset:bouquet-terracotta.jpg',
+      imageAlt: 'Terracotta rose and pampas bridal bouquet',
+      cards: [
+        { image: 'asset:wedding-card-nr.jpg', title: 'Invitations', text: 'foiled & hand-finished' },
+        { image: 'asset:ring-holder-round.jpg', title: 'Ring holders', text: 'engraved to order' },
+      ],
+      trust: [
+        { value: '2,500+', label: 'follow the studio' },
+        { value: '10', label: 'things we make' },
+        { value: 'Worldwide', label: 'shipping' },
+      ],
+    },
+    make: {
+      eyebrow: 'What we make',
+      title: 'Ten ways to make it',
+      titleAccent: 'yours',
+      lede: 'Everything is made to order. Pick one to start a quote with it already chosen.',
+    },
+    process: {
+      eyebrow: 'How it works',
+      title: 'From idea to',
+      titleAccent: 'doorstep',
+      lede: 'No back-and-forth to get started. Everything we need arrives in one enquiry, so we can reply with a real quote.',
+      button: 'Start my quote',
+      steps: [
+        { title: 'Share your inspiration', text: 'Upload screenshots, Pinterest saves or photos of our work you love.' },
+        { title: 'Choose the details', text: 'Size, colour, paper, finishing, quantity and budget, all tap-to-select.' },
+        { title: 'See an approximate price', text: 'An estimate appears as you choose. No waiting to find out if it fits.' },
+        { title: 'We review & quote', text: 'We study your enquiry and send a final written quotation.' },
+        { title: 'Confirm your order', text: 'Approve the quote and design, then we reserve your production slot.' },
+        { title: 'Made by hand, delivered', text: 'Crafted in our Shillong studio and dispatched by courier.' },
+      ],
+    },
+    gallery: { title: 'From the', titleAccent: 'studio', link: 'All work', itemHint: 'Quote something like this →' },
+    packages: {
+      eyebrow: 'Invitation packages',
+      title: 'Pick a starting',
+      titleAccent: 'point',
+      lede: 'Every suite is designed for you. These are starting prices; your quote reflects your exact design.',
+    },
+    story: {
+      eyebrow: 'A new name',
+      text: "Dream Craft is now Mynséra. Same studio in Shillong, same hands cutting, folding, wiring and packing every order. The name grew up; the care didn't change.",
+      image: 'asset:boutonnieres-dried.jpg',
+      imageAlt: 'Dried flower boutonnieres laid out in the studio',
+      badge: 'now',
+    },
+    cta: {
+      eyebrow: 'Ready when you are',
+      title: 'Tell us about',
+      titleAccent: 'your day',
+      lede: 'Upload what you love, choose your details and see a price range before you message us.',
+      button: 'Get a quote',
+      whatsappLabel: 'Just have a question? WhatsApp',
+    },
+  },
+
+  work: {
+    eyebrow: 'Our work',
+    title: 'Made for',
+    titleAccent: 'real',
+    titleEnd: 'celebrations',
+    lede: 'Tap anything you love to start a quote with it attached as your inspiration.',
+    emptyTitle: 'Photos of this category are coming soon.',
+    emptyText: 'We still make it. Tell us what you have in mind.',
+    instagramLine: 'More on Instagram:',
+  },
+
+  pricing: {
+    eyebrow: 'Packages & pricing',
+    title: 'Honest',
+    titleAccent: 'starting',
+    titleEnd: 'prices',
+    lede: 'Every suite is made to order, so these are where prices begin. Your quote reflects your exact design, paper and finishing.',
+    packages: [
+      { id: 'standard', name: 'Standard', from: 18000, qty: 50, blurb: 'Clean, elegant printed suites.', featured: false },
+      { id: 'signature', name: 'Signature', from: 55000, qty: 150, blurb: 'Layered suites with richer paper and detailing.', featured: true },
+      { id: 'luxury', name: 'Luxury', from: 89000, qty: 150, blurb: 'Statement pieces: premium stock, foil, finishing throughout.', featured: false },
+    ],
+    featuredLabel: 'Most chosen',
+    rules: {
+      customFromPerInvite: 100,
+      foilNamesPerInvite: 20,
+      foilFullPerInvite: 50,
+      rushPerInvite: 20,
+      rushWithinDays: 30,
+      bulkDiscountAbove: 500,
+      bulkDiscountPercent: 15,
+      rangeSpreadPercent: 35,
+    },
+    sizesLine: '5×7 · 5.5×7.7',
+    sizesText: 'Standard sizes, in inches. Custom sizes on request',
+    disclaimer:
+      'This is an approximate range. The final price depends on the actual design, materials and production requirements, and is confirmed in your written quotation.',
+    deliveryNote: 'Delivery is arranged through a third-party courier. Any delivery charges are communicated separately.',
+    otherProductsNote:
+      'Bouquets, boutonnieres, ring holders, cake toppers, banners, piñatas, props, hymnals and return gifts are quoted individually.',
+    faqTitle: 'Questions',
+    faqs: [
+      { question: 'Is the estimate on the quote form the final price?', answer: 'No. It is an approximate range. The final price depends on the actual design, materials and production requirements, and is confirmed in your written quotation.' },
+      { question: 'Which invitation sizes do you offer?', answer: 'Our standard sizes are 5 × 7 in and 5.5 × 7.7 in. Custom sizes and shapes are available, so just choose "Custom size" on the quote form.' },
+      { question: 'Do you offer discounts on large orders?', answer: 'Yes. Customised invitation orders above 500 pieces get 15% off.' },
+      { question: 'What if my wedding is soon?', answer: "We can often help. Rush orders carry a ₹20 per invite surcharge. Enter your date on the quote form and we'll flag it automatically." },
+      { question: 'How does delivery work?', answer: 'Delivery is arranged through a third-party courier. Any delivery charges are communicated separately.' },
+      { question: 'What happens after I send an enquiry?', answer: 'You get a reference number straight away. We review your inspiration and requirements and send a final written quotation. Once you confirm and approve the design, we reserve your production slot.' },
+    ],
+  },
+
+  quote: {
+    eyebrow: 'Get a quote',
+    title: 'Tell us about',
+    titleAccent: 'your piece',
+    sub: 'About two minutes. Your answers are saved as you go.',
+    stepProduct: 'What are we making?',
+    stepInspiration: 'Share your inspiration',
+    inspirationHint: 'Screenshots, Pinterest saves, photos of our work, anything that shows the look you want. Up to 5 images.',
+    notesPlaceholder: 'e.g. Arch-shaped invite with our monogram, sage and ivory, gold foil names',
+    stepDetails: 'Choose the details',
+    stepQuantity: 'Quantity & budget',
+    stepDate: 'When & where?',
+    stepContact: 'Where should we send your quote?',
+    stepReview: 'Check & send',
+    budgets: ['Under ₹5,000', '₹5,000 – 15,000', '₹15,000 – 30,000', '₹30,000 – 60,000', '₹60,000 – 1,00,000', 'Above ₹1,00,000', 'Not sure yet'],
+    occasions: ['Wedding', 'Engagement', 'Birthday', 'Baby shower', 'Anniversary', 'School / corporate', 'Other'],
+    colours: [
+      { name: 'Ivory', hex: '#F4EDE0' }, { name: 'Blush', hex: '#EBC9B2' }, { name: 'Terracotta', hex: '#B85C38' },
+      { name: 'Burgundy', hex: '#6E1F2B' }, { name: 'Sage', hex: '#8A9A74' }, { name: 'Emerald', hex: '#1F5A45' },
+      { name: 'Navy', hex: '#1E2B4A' }, { name: 'Lilac', hex: '#B9A3CF' }, { name: 'Gold', hex: '#C9A45C' }, { name: 'Black', hex: '#1F1B18' },
+    ],
+    rushNote: "This date is soon, so it would be a rush order. We'll confirm we can make it in time.",
+    consentText: 'I agree that Mynséra may store these details and images to prepare my quote and contact me about it.',
+    successEyebrow: 'Enquiry received',
+    successText: "We have everything we need: your images, details, date and budget. We'll review it and send your quotation.",
+    nextSteps: [
+      'We review your inspiration and requirements',
+      'We send a final written quotation',
+      'You confirm and approve the design, then we make it',
+    ],
+    whatsappButton: 'Continue on WhatsApp',
+  },
+
+  products: [
+    {
+      id: 'invitations', visible: true, title: 'Wedding invitations', short: 'Invitations',
+      blurb: 'Fully customised invitation suites. Your names, your story, your colours, printed, foiled and finished by hand.',
+      unit: 'invites', defaultQty: 150, estimate: true,
+      images: ['asset:wedding-card-nr.jpg', 'asset:birthday-invite-fairy.jpg'],
+      variants: [],
+      sizes: [{ value: '5x7', label: '5 × 7 in', note: '' }, { value: '5.5x7.7', label: '5.5 × 7.7 in', note: '' }, { value: 'custom', label: 'Custom size', note: '' }],
+      shapes: [{ value: 'rectangle', label: 'Rectangle', note: '' }, { value: 'arch', label: 'Arch', note: '' }, { value: 'square', label: 'Square', note: '' }, { value: 'custom', label: 'Custom shape', note: '' }],
+      materials: [{ value: 'textured', label: 'Textured card', note: '' }, { value: 'handmade', label: 'Handmade paper', note: '' }, { value: 'vellum', label: 'Vellum overlay', note: '' }, { value: 'acrylic', label: 'Acrylic', note: '' }, { value: 'unsure', label: 'Not sure yet', note: '' }],
+      finishes: [{ value: 'foil-names', label: 'Foil names', note: '+₹20 each' }, { value: 'foil-full', label: 'Full-page foil', note: '+₹50 each' }, { value: 'laser', label: 'Laser cut', note: '' }, { value: 'wax', label: 'Wax seal', note: '' }, { value: 'ribbon', label: 'Ribbon / tassel', note: '' }, { value: 'envelope', label: 'Printed envelope', note: '' }],
+    },
+    {
+      id: 'bouquets', visible: true, title: 'Bouquets', short: 'Bouquets',
+      blurb: 'Bridal and bridesmaid bouquets that last well past the day, in artificial or natural dried flowers.',
+      unit: 'bouquets', defaultQty: 1, estimate: false,
+      images: ['asset:bouquet-terracotta.jpg', 'asset:bouquet-tulip.jpg', 'asset:bouquet-red-brooch.jpg'],
+      variants: [{ value: 'artificial', label: 'Artificial flowers', note: '' }, { value: 'dried', label: 'Natural dried flowers', note: '' }],
+      sizes: [{ value: 'posy', label: 'Petite posy', note: '' }, { value: 'classic', label: 'Classic', note: '' }, { value: 'statement', label: 'Statement / cascade', note: '' }],
+      shapes: [], materials: [],
+      finishes: [{ value: 'ribbon', label: 'Ribbon wrap', note: '' }, { value: 'brooch', label: 'Brooch accents', note: '' }, { value: 'pearls', label: 'Pearl pins', note: '' }, { value: 'lace', label: 'Lace handle', note: '' }],
+    },
+    {
+      id: 'boutonnieres', visible: true, title: 'Boutonnieres', short: 'Boutonnieres',
+      blurb: 'Buttonholes and corsages matched to the bouquet, for the groom, the family and the whole party.',
+      unit: 'pieces', defaultQty: 10, estimate: false,
+      images: ['asset:boutonnieres-ivory.jpg', 'asset:boutonnieres-dried.jpg'],
+      variants: [{ value: 'artificial', label: 'Artificial flowers', note: '' }, { value: 'dried', label: 'Natural dried flowers', note: '' }],
+      sizes: [], shapes: [], materials: [],
+      finishes: [{ value: 'pearls', label: 'Pearl detail', note: '' }, { value: 'ribbon', label: 'Ribbon wrap', note: '' }, { value: 'pin', label: 'Pin-on', note: '' }, { value: 'wrist', label: 'Wrist corsage', note: '' }],
+    },
+    {
+      id: 'banners', visible: true, title: 'Party banners', short: 'Banners',
+      blurb: 'Name banners and bunting cut to your theme, for birthdays, showers and receptions.',
+      unit: 'banners', defaultQty: 1, estimate: false, images: [], variants: [], shapes: [],
+      sizes: [{ value: 'small', label: 'Up to 1.5 m', note: '' }, { value: 'medium', label: '1.5 – 3 m', note: '' }, { value: 'large', label: '3 m +', note: '' }],
+      materials: [{ value: 'card', label: 'Card stock', note: '' }, { value: 'glitter', label: 'Glitter card', note: '' }, { value: 'fabric', label: 'Fabric', note: '' }, { value: 'unsure', label: 'Not sure yet', note: '' }],
+      finishes: [],
+    },
+    {
+      id: 'pinata', visible: true, title: '3D piñatas', short: 'Piñatas',
+      blurb: 'Sculpted 3D piñatas in any character, number or shape, made to be the loudest moment of the party.',
+      unit: 'piñatas', defaultQty: 1, estimate: false, images: [], variants: [], shapes: [], materials: [],
+      sizes: [{ value: 'small', label: 'Small (~30 cm)', note: '' }, { value: 'medium', label: 'Medium (~50 cm)', note: '' }, { value: 'large', label: 'Large (~75 cm)', note: '' }],
+      finishes: [{ value: 'pull', label: 'Pull strings', note: '' }, { value: 'filled', label: 'Pre-filled', note: '' }],
+    },
+    {
+      id: 'props', visible: true, title: 'Props for school & parties', short: 'Props',
+      blurb: 'Photo-booth props, stage pieces and school project props, built sturdy enough to survive the day.',
+      unit: 'pieces', defaultQty: 10, estimate: false, images: [], variants: [], sizes: [], shapes: [], finishes: [],
+      materials: [{ value: 'card', label: 'Card / foam board', note: '' }, { value: 'wood', label: 'Wood', note: '' }, { value: 'mixed', label: 'Mixed', note: '' }, { value: 'unsure', label: 'Not sure yet', note: '' }],
+    },
+    {
+      id: 'hymnals', visible: true, title: 'Order of service & wedding hymnals', short: 'Hymnals',
+      blurb: 'Printed and bound orders of service and hymn booklets, laid out to match your invitations.',
+      unit: 'booklets', defaultQty: 150, estimate: false, images: [], variants: [], shapes: [],
+      sizes: [{ value: 'a5', label: 'A5', note: '' }, { value: 'dl', label: 'DL (slim)', note: '' }, { value: 'custom', label: 'Custom size', note: '' }],
+      materials: [{ value: 'textured', label: 'Textured card cover', note: '' }, { value: 'handmade', label: 'Handmade paper cover', note: '' }, { value: 'unsure', label: 'Not sure yet', note: '' }],
+      finishes: [{ value: 'ribbon', label: 'Ribbon binding', note: '' }, { value: 'stapled', label: 'Saddle stitched', note: '' }, { value: 'foil', label: 'Foiled cover', note: '' }],
+    },
+    {
+      id: 'ring-holders', visible: true, title: 'Ring holders', short: 'Ring holders',
+      blurb: 'Engraved wooden ring holders dressed with flowers, a keepsake long after the rings are on.',
+      unit: 'holders', defaultQty: 1, estimate: false,
+      images: ['asset:ring-holder-oval.jpg', 'asset:ring-holder-round.jpg'],
+      variants: [], sizes: [], materials: [],
+      shapes: [{ value: 'round', label: 'Round', note: '' }, { value: 'oval', label: 'Oval', note: '' }, { value: 'box', label: 'Box', note: '' }, { value: 'custom', label: 'Custom shape', note: '' }],
+      finishes: [{ value: 'engraved', label: 'Engraved names', note: '' }, { value: 'florals', label: 'Floral dressing', note: '' }, { value: 'lace', label: 'Lace / ribbon', note: '' }],
+    },
+    {
+      id: 'return-gifts', visible: true, title: 'Return gifts & thank-you cards', short: 'Return gifts',
+      blurb: 'Personalised favour pouches, gift bags and thank-you cards so every guest leaves with something.',
+      unit: 'pieces', defaultQty: 100, estimate: false,
+      images: ['asset:return-gift-pouches.jpg', 'asset:favor-bags-jungle.jpg'],
+      variants: [], sizes: [], shapes: [],
+      materials: [{ value: 'jute', label: 'Jute / burlap', note: '' }, { value: 'paper', label: 'Paper bag', note: '' }, { value: 'fabric', label: 'Fabric pouch', note: '' }, { value: 'card', label: 'Card only', note: '' }, { value: 'unsure', label: 'Not sure yet', note: '' }],
+      finishes: [{ value: 'tag', label: 'Name tags', note: '' }, { value: 'print', label: 'Printed', note: '' }, { value: 'filled', label: 'Filled for you', note: '' }],
+    },
+    {
+      id: 'cake-toppers', visible: true, title: 'Cake toppers', short: 'Cake toppers',
+      blurb: 'Names, numbers and characters, cut in acrylic, layered paper or wood.',
+      unit: 'toppers', defaultQty: 1, estimate: false, images: ['asset:cake-topper.jpg'],
+      variants: [{ value: 'acrylic', label: 'Acrylic', note: '' }, { value: 'paper', label: 'Paper', note: '' }, { value: 'wooden', label: 'Wooden', note: '' }],
+      sizes: [], shapes: [], materials: [],
+      finishes: [{ value: 'mirror', label: 'Mirror finish', note: '' }, { value: 'glitter', label: 'Glitter', note: '' }, { value: 'shaker', label: 'Shaker / 3D', note: '' }],
+    },
+  ],
+
+  gallery: [
+    { id: 'g1', visible: true, image: 'asset:bouquet-terracotta.jpg', product: 'bouquets', title: 'Terracotta & pampas', alt: 'Terracotta rose and pampas bridal bouquet' },
+    { id: 'g2', visible: true, image: 'asset:wedding-card-nr.jpg', product: 'invitations', title: 'N & R', alt: 'Wedding invitation with a laser-cut couple motif' },
+    { id: 'g3', visible: true, image: 'asset:boutonnieres-dried.jpg', product: 'boutonnieres', title: 'Dried meadow', alt: 'Dried flower boutonnieres' },
+    { id: 'g4', visible: true, image: 'asset:birthday-invite-fairy.jpg', product: 'invitations', title: 'Fairy garden', alt: 'Purple fairy themed first birthday invitations' },
+    { id: 'g5', visible: true, image: 'asset:ring-holder-oval.jpg', product: 'ring-holders', title: 'Carl & Danie', alt: 'Oval engraved wooden ring holder with blush florals' },
+    { id: 'g6', visible: true, image: 'asset:return-gift-pouches.jpg', product: 'return-gifts', title: 'Lavender linen', alt: 'Burlap favour pouches with lavender' },
+    { id: 'g7', visible: true, image: 'asset:bouquet-red-brooch.jpg', product: 'bouquets', title: 'Ruby brooch', alt: 'Red rose bouquet with crystal brooches' },
+    { id: 'g8', visible: true, image: 'asset:favor-bags-jungle.jpg', product: 'return-gifts', title: 'Little jungle', alt: 'Jungle themed party favour bags' },
+    { id: 'g9', visible: true, image: 'asset:cake-topper.jpg', product: 'cake-toppers', title: 'Shaker topper', alt: 'Layered paper character cake topper' },
+    { id: 'g10', visible: true, image: 'asset:bouquet-tulip.jpg', product: 'bouquets', title: 'Tulip posy', alt: 'White and burgundy tulip bridal bouquet' },
+    { id: 'g11', visible: true, image: 'asset:boutonnieres-ivory.jpg', product: 'boutonnieres', title: 'Ivory & gold', alt: 'Ivory rose boutonnieres with gold accents' },
+    { id: 'g12', visible: true, image: 'asset:ring-holder-round.jpg', product: 'ring-holders', title: 'A & K', alt: 'Round engraved wooden ring holder with dried flowers' },
+  ],
+};
+
+export type Content = typeof defaults;
+export type DocKey = keyof Content;
+export type ProductDoc = Content['products'][number];
+export type GalleryDoc = Content['gallery'][number];
+export type Choice = ProductDoc['sizes'][number];
+
+// Who may edit and publish each document.
+export const STAFF_DOCS: DocKey[] = ['products', 'gallery'];
+export const DOC_KEYS = Object.keys(defaults) as DocKey[];

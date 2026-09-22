@@ -1,0 +1,83 @@
+---
+import Base from '../layouts/Base.astro';
+import { loadContent } from '../content/load';
+import { url } from '../lib/images';
+import { inr } from '../lib/pricing';
+
+const { pricing } = await loadContent();
+const r = pricing.rules;
+---
+<Base page="pricing" title="Packages & pricing" description={pricing.lede}>
+  <section class="phead">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal="left"><i></i>{pricing.eyebrow}</p>
+      <h1 class="h-xl" data-split="chars">{pricing.title} <span class="it">{pricing.titleAccent}</span> {pricing.titleEnd}</h1>
+      <p class="lede" data-split="words">{pricing.lede}</p>
+    </div>
+  </section>
+
+  <section class="sec pk" style="padding-top:0">
+    <div class="wrap">
+      <div class="pk__grid" data-reveal-group>
+        {pricing.packages.map((p) => (
+          <article class:list={['pk__card', { 'is-featured': p.featured }]} data-tilt>
+            {p.featured && <span class="pk__tag">{pricing.featuredLabel}</span>}
+            <h2 class="h-md" style="margin-bottom:1rem">{p.name}</h2>
+            <p class="pk__from">starting</p>
+            <p class="pk__price">₹<span data-count={p.from}>{p.from.toLocaleString('en-IN')}</span></p>
+            <p class="pk__qty">for {p.qty} invites</p>
+            <p class="pk__blurb">{p.blurb}</p>
+            <a href={url(`quote/?product=invitations&tier=${p.id}`)} class:list={['btn btn--sm magnetic', p.featured ? 'btn--light' : 'btn--ghost']} data-cursor="Quote"><span>Quote {p.name}</span></a>
+          </article>
+        ))}
+      </div>
+
+      <div class="rules" data-reveal-group>
+        <div class="rule"><b>{inr(r.customFromPerInvite)}+</b><span>Custom invitations, per invite</span></div>
+        <div class="rule"><b>+{inr(r.foilNamesPerInvite)}</b><span>Foiled names, per invite</span></div>
+        <div class="rule"><b>+{inr(r.foilFullPerInvite)}</b><span>Full-page foiling, per invite</span></div>
+        <div class="rule"><b>{r.bulkDiscountPercent}% off</b><span>Custom invitations above {r.bulkDiscountAbove}</span></div>
+        <div class="rule"><b>+{inr(r.rushPerInvite)}</b><span>Rush orders, per invite</span></div>
+        <div class="rule"><b>{pricing.sizesLine}</b><span>{pricing.sizesText}</span></div>
+      </div>
+      <p class="pk__note" data-reveal="fade">{pricing.disclaimer}<br />{pricing.deliveryNote}</p>
+      <p class="pk__note" data-reveal="fade">{pricing.otherProductsNote} <a href={url('quote/')}>Start a quote →</a></p>
+    </div>
+  </section>
+
+  {pricing.faqs.length > 0 && (
+    <section class="sec" style="padding-top:0">
+      <div class="wrap">
+        <header class="sec__head sec__head--center"><h2 class="h-lg" data-split="chars">{pricing.faqTitle}</h2></header>
+        <div class="faq" data-reveal-group>
+          {pricing.faqs.map((f) => (
+            <details>
+              <summary>{f.question}<i aria-hidden="true">+</i></summary>
+              <div class="faq__body"><p>{f.answer}</p></div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <script>
+    import { gsap, REDUCED, $$ } from '../scripts/motion/core';
+    // Animate <details> open/close instead of snapping.
+    $$<HTMLDetailsElement>('.faq details').forEach((d) => {
+      const summary = d.querySelector('summary')!;
+      const body = d.querySelector<HTMLElement>('.faq__body')!;
+      summary.addEventListener('click', (e) => {
+        if (REDUCED) return;
+        e.preventDefault();
+        if (d.open) {
+          gsap.to(body, { height: 0, duration: 0.45, ease: 'power3.inOut', onComplete: () => { d.open = false; gsap.set(body, { clearProps: 'height' }); } });
+        } else {
+          d.open = true;
+          gsap.from(body, { height: 0, duration: 0.55, ease: 'power3.out', clearProps: 'height' });
+          gsap.from(body.children, { y: 16, autoAlpha: 0, duration: 0.5, delay: 0.1 });
+        }
+      });
+    });
+  </script>
+</Base>

@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro';
+import Pic from '../components/Pic.astro';
+import { loadContent } from '../content/load';
+import { url } from '../lib/images';
+
+const { work, products, gallery, settings } = await loadContent();
+const items = gallery.filter((g) => g.visible);
+const cats = products.filter((p) => p.visible);
+const shortOf = Object.fromEntries(products.map((p) => [p.id, p.short]));
+const count = (id: string) => items.filter((g) => g.product === id).length;
+---
+<Base page="work" title="Our work" description={`${work.lede} ${settings.brand.description}`}>
+  <section class="phead">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal="left"><i></i>{work.eyebrow}</p>
+      <h1 class="h-xl" data-split="chars">{work.title} <span class="it">{work.titleAccent}</span> {work.titleEnd}</h1>
+      <p class="lede" data-split="words">{work.lede}</p>
+    </div>
+  </section>
+
+  <div class="filters">
+    <div class="filters__row" role="toolbar" aria-label="Filter by category">
+      <button class="filter" data-filter="all" aria-pressed="true" data-cursor="All">All<sup>{items.length}</sup></button>
+      {cats.map((p) => (
+        <button class="filter" data-filter={p.id} aria-pressed="false" data-cursor="Filter">{p.short}<sup>{count(p.id)}</sup></button>
+      ))}
+    </div>
+  </div>
+
+  <section class="work">
+    <div class="wrap">
+      <div class="work__grid" id="workGrid" data-skew>
+        {items.map((g) => (
+          <a class="tile" data-cat={g.product} href={url(`quote/?product=${g.product}&ref=${encodeURIComponent(g.id)}`)} data-cursor="Like this">
+            <Pic src={g.image} alt={g.alt} widths={[360, 640]} sizes="(max-width: 600px) 46vw, (max-width: 1000px) 45vw, 30vw" />
+            <span class="tile__cap">
+              <span><b>{g.title}</b><small>{shortOf[g.product] ?? ''}</small></span>
+              <span class="tile__go">Quote this</span>
+            </span>
+          </a>
+        ))}
+      </div>
+      <div class="work__empty" id="workEmpty" hidden>
+        <p class="h-md">{work.emptyTitle}</p>
+        <p class="lede" style="margin:1rem auto 1.6rem">{work.emptyText}</p>
+        <a class="btn btn--quote" id="workEmptyCta" href={url('quote/')}><span>Get a quote</span></a>
+      </div>
+      <p class="pk__note" data-reveal="fade">{work.instagramLine} <a href={settings.contact.instagramUrl} target="_blank" rel="noopener">{settings.contact.instagramHandle} ↗</a></p>
+    </div>
+  </section>
+
+  <script>
+    import '../scripts/motion/work';
+  </script>
+</Base>

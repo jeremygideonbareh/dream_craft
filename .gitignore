@@ -1,5 +1,11 @@
 .claude/
 node_modules/
+dist/
+.astro/
+_legacy/
+.env
+.env.*
+!.env.example
 .DS_Store
 Thumbs.db
 *.log
