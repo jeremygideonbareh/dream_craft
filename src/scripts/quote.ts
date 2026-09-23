@@ -230,7 +230,10 @@ function go(to: number, focus = true) {
 
   const out = stepsEls[from], inn = stepsEls[step];
   const dir = step >= from ? 1 : -1;
+  let shown = false;
   const show = () => {
+    if (shown) return;
+    shown = true;
     stepsEls.forEach((s, i) => (s.hidden = i !== step));
     if (!REDUCED && from !== step) {
       gsap.fromTo(inn, { x: 60 * dir, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: 0.55, ease: 'power3.out' });
@@ -241,8 +244,12 @@ function go(to: number, focus = true) {
       inn.querySelector<HTMLElement>('.qz__title')?.focus({ preventScroll: true });
     }
   };
-  if (!REDUCED && from !== step && !out.hidden) gsap.to(out, { x: -40 * dir, autoAlpha: 0, duration: 0.25, ease: 'power2.in', onComplete: show });
-  else show();
+  if (!REDUCED && from !== step && !out.hidden) {
+    gsap.to(out, { x: -40 * dir, autoAlpha: 0, duration: 0.25, ease: 'power2.in', onComplete: show });
+    // moving on must never wait on an animation: if frames stall (a
+    // throttled phone, a backgrounded tab), a timer swaps the step anyway
+    setTimeout(show, 400);
+  } else show();
 
   $('#qzBack')!.hidden = step === 0;
   const next = $('#qzNext')!;
