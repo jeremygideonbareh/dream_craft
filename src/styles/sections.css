@@ -58,26 +58,67 @@ html.js [data-hero-lede]{visibility:hidden}
 .strip__row--alt .strip__set span{font-style:normal;font-family:var(--f-ui);font-size:clamp(.7rem,1vw,.8rem);letter-spacing:.3em;text-transform:uppercase}
 .strip__set em{color:var(--blush-2);font-style:normal;font-size:.9rem}
 
-/* =========================================================
-   WHAT WE MAKE: sticky stacking cards
-   ========================================================= */
 .make .sec__head .lede{max-width:34ch}
-.stack{display:flex;flex-direction:column;gap:clamp(1.5rem,4vh,3rem);padding-bottom:4vh}
-.stack__card{position:sticky;top:calc(var(--nav-h) + 1rem + var(--i) * 10px);transform-origin:50% 0}
-.stack__inner{
-  display:grid;grid-template-columns:1fr 1.1fr;min-height:min(72svh,560px);
-  background:var(--cream-2);border-radius:calc(var(--r) + 10px);overflow:hidden;
-  box-shadow:0 -12px 40px -24px rgba(51,36,27,.35);border:1px solid rgba(255,255,255,.6);
+/* =========================================================
+   WHAT WE MAKE: the catalogue grid
+   Centred flex rows, so any number of products makes a tidy final
+   row. Five across on a laptop fits all ten on one screen.
+   ========================================================= */
+.cat{--gap:clamp(.75rem,1.4vw,1.25rem);--cols:5;display:flex;flex-wrap:wrap;justify-content:center;gap:var(--gap);perspective:1400px}
+/* min-width:0 lets long one-line subtitles truncate instead of widening the card;
+   the 1px keeps sub-pixel rounding from pushing a row's last card onto the next */
+.cat__item{flex:0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols) - 1px);min-width:0;will-change:transform}
+.cat__card{
+  position:relative;display:flex;flex-direction:column;height:100%;
+  background:var(--cream);border-radius:calc(var(--r) + 2px);overflow:hidden;
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 18px 40px -30px rgba(51,36,27,.45);
+  border:1px solid rgba(51,36,27,.08);transform-style:preserve-3d;
+  transition:box-shadow .5s var(--ease),border-color .5s var(--ease),opacity .45s var(--ease);
 }
-.stack__card:nth-child(3n+2) .stack__inner{background:var(--blush)}
-.stack__card:nth-child(3n) .stack__inner{background:#EFE3CF}
-.stack__copy{padding:clamp(1.6rem,4vw,3.4rem);display:flex;flex-direction:column;align-items:flex-start;gap:1rem;justify-content:center}
-.stack__num{font-size:.66rem;letter-spacing:.24em;color:var(--terra);font-weight:500}
-.stack__copy p{color:var(--ink-2);max-width:42ch}
-.stack__chips{display:flex;flex-wrap:wrap;gap:.4rem}
-.stack__copy .btn{margin-top:.6rem}
-.stack__media{position:relative;overflow:hidden;min-height:260px}
-.stack__media img,.stack__media .ph{position:absolute;inset:-8% 0;width:100%;height:116%;object-fit:cover;will-change:transform}
+.cat__card:hover{box-shadow:0 30px 60px -28px rgba(51,36,27,.55);border-color:rgba(184,92,56,.35)}
+.cat__media{position:relative;aspect-ratio:1/1.08;overflow:hidden;background:var(--cream-2)}
+.cat__zoom{position:absolute;inset:0;transition:transform 1.1s var(--ease)}
+.cat__card:hover .cat__zoom{transform:scale(1.08)}
+.cat__media img{position:absolute;inset:-6% 0;width:100%;height:112%;object-fit:cover;will-change:transform}
+
+/* products without photos yet: a tinted "illustration" card */
+.cat__media--art{background:var(--tint,var(--cream-2))}
+.cat__media--art .ph{position:absolute;inset:0;background:none}
+.cat__media--art .ph svg{width:46%;max-width:none;stroke-width:1.4;opacity:.9}
+.cat__media--art .ph b{display:none}
+.cat__artname{
+  position:absolute;left:.9rem;right:.9rem;bottom:.8rem;z-index:1;
+  font-family:var(--f-disp);font-style:italic;font-size:clamp(1.5rem,2.2vw,2.1rem);line-height:1;color:var(--ink);
+  font-variation-settings:"SOFT" 100,"WONK" 1;opacity:.85;
+}
+
+.cat__num{position:absolute;top:.7rem;left:.7rem;z-index:2;font-family:var(--f-disp);font-size:.78rem;padding:.15rem .55rem;border-radius:999px;background:rgba(251,245,236,.92);color:var(--ink)}
+
+/* hover: description and quote button rise over the photo */
+.cat__more{
+  position:absolute;inset:auto 0 0 0;z-index:2;padding:2.6rem .8rem .8rem;
+  display:flex;flex-direction:column;gap:.6rem;
+  background:linear-gradient(to top,rgba(51,36,27,.88) 35%,rgba(51,36,27,0));
+  color:var(--cream);transform:translateY(101%);transition:transform .6s var(--ease);
+}
+.cat__more p{font-size:.8rem;line-height:1.45;opacity:.92}
+.cat__card:hover .cat__more,.cat__card:focus-visible .cat__more{transform:translateY(0)}
+.cat__go{
+  display:flex;align-items:center;justify-content:center;gap:.45rem;min-height:40px;border-radius:999px;
+  background:var(--terra);color:#fff;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;font-weight:500;
+}
+.cat__go svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+.cat__body{padding:.8rem .9rem .95rem;display:flex;flex-direction:column;gap:.25rem;min-width:0}
+.cat__body h3{font-size:clamp(.98rem,1.2vw,1.12rem);line-height:1.2}
+.cat__sub{font-size:.7rem;letter-spacing:.04em;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat__tag{display:none}
+
+/* focus: the rest of the grid steps back while one card is hovered */
+@media (hover:hover){
+  .cat:hover .cat__card{opacity:.5}
+  .cat .cat__item:hover .cat__card{opacity:1}
+}
 
 /* =========================================================
    PROCESS
@@ -235,6 +276,11 @@ html.reduced .thread{opacity:.5}
 .prose__contact{padding-top:1.6rem;color:var(--ink-2)}
 .prose a{color:var(--terra);text-decoration:underline;text-underline-offset:3px}
 
+@media (hover:none){
+  .cat__more{display:none}
+  .cat__tag{display:block;position:absolute;top:.6rem;right:.6rem;z-index:3;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;font-weight:500;padding:.3rem .6rem;border-radius:999px;background:var(--terra);color:#fff}
+}
+
 /* =========================================================
    REDUCED MOTION: final states, native scrolling
    ========================================================= */
@@ -244,12 +290,12 @@ html.reduced .gal__item{scroll-snap-align:start}
 html.reduced .gal__img img{transform:none}
 html.reduced .process__step h3{color:var(--ink)}
 html.reduced .process__rail i{transform:none}
-html.reduced .stack__card{position:relative;top:auto}
 
 /* =========================================================
    RESPONSIVE (sections)
    ========================================================= */
 @media (max-width:1080px){
+  .cat{--cols:4}
   .pk__grid{grid-template-columns:1fr;max-width:520px;margin-inline:auto}
   .rules{grid-template-columns:1fr 1fr}
 }
@@ -260,9 +306,7 @@ html.reduced .stack__card{position:relative;top:auto}
   .hero__scroll{display:none}
   .sec__head{flex-direction:column;align-items:flex-start;gap:1rem}
   .sec__head--center{align-items:center}
-  .stack__inner{grid-template-columns:1fr;min-height:0}
-  .stack__media{order:-1;aspect-ratio:16/11;min-height:0}
-  .stack__card{top:calc(var(--nav-h) + .5rem + var(--i) * 6px)}
+  .cat{--cols:3}
   .process__grid{grid-template-columns:1fr}
   .process__intro{position:static}
   .gal__pin{height:auto;padding:4.5rem 0}
@@ -280,7 +324,8 @@ html.reduced .stack__card{position:relative;top:auto}
   .hero__card{padding:.45rem .8rem .45rem .45rem}
   .hero__card img{width:38px;height:38px}
   .hero__trust{gap:1.2rem}
-  .stack__card{position:relative;top:auto}
+  .cat{--cols:2;--gap:.7rem}
+  .cat__sub{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
   .rules{grid-template-columns:1fr}
   .work__grid{columns:2 150px;column-gap:.7rem}
   .tile{margin-bottom:.7rem}

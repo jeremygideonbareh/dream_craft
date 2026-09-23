@@ -1,10 +1,14 @@
 ---
+// "What we make": every product at once, as a grid that assembles itself as
+// you scroll into it. Motion lives in scripts/motion/home.ts (catalog()).
 import ProductArt from '../ProductArt.astro';
 import { loadContent } from '../../content/load';
 import { url } from '../../lib/images';
 const { home, products } = await loadContent();
 const m = home.make;
 const list = products.filter((p) => p.visible);
+// placeholder cards (no photo yet) get one of these tints in turn
+const tints = ['#F3DDCD', '#E6E2CF', '#EFD9D2', '#E3E6DA', '#F2E3C9'];
 ---
 <section class="sec make" id="make" data-bg="#FAF2E7">
   <div class="wrap">
@@ -15,23 +19,29 @@ const list = products.filter((p) => p.visible);
       </div>
       <p class="lede" data-split="words">{m.lede}</p>
     </header>
-    <ol class="stack" data-stack>
+
+    <ul class="cat" data-catalog>
       {list.map((p, i) => (
-        <li class="stack__card" data-stack-card style={`--i:${i}`}>
-          <div class="stack__inner">
-            <div class="stack__copy">
-              <span class="stack__num">{String(i + 1).padStart(2, '0')} / {list.length}</span>
-              <h3 class="h-md">{p.title}</h3>
-              <p>{p.blurb}</p>
-              {p.variants.length > 0 && <ul class="stack__chips">{p.variants.map((v) => <li class="chip">{v.label}</li>)}</ul>}
-              <a href={url(`quote/?product=${p.id}`)} class="btn btn--quote btn--sm magnetic" data-cursor="Quote">
-                <span>Quote {p.short.toLowerCase()}</span><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
-              </a>
+        <li class="cat__item" data-cat-item>
+          <a class="cat__card" href={url(`quote/?product=${p.id}`)} data-cursor="Quote" data-tilt
+             style={p.images.length ? undefined : `--tint:${tints[i % tints.length]}`}>
+            <div class:list={['cat__media', { 'cat__media--art': !p.images.length }]} data-cat-media>
+              <div class="cat__zoom"><ProductArt product={p} sizes="(max-width: 600px) 46vw, (max-width: 1100px) 31vw, 19vw" /></div>
+              {!p.images.length && <span class="cat__artname" aria-hidden="true">{p.short}</span>}
+              <span class="cat__num">{String(i + 1).padStart(2, '0')}</span>
+              <div class="cat__more" aria-hidden="true">
+                <p>{p.blurb}</p>
+                <span class="cat__go">Quote <svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" /></svg></span>
+              </div>
             </div>
-            <div class="stack__media" data-stack-media><ProductArt product={p} /></div>
-          </div>
+            <div class="cat__body">
+              <h3>{p.title}</h3>
+              <p class="cat__sub">{p.variants.length ? p.variants.map((v) => v.label).join(' · ') : `Made to order · per ${p.unit.replace(/s$/, '')}`}</p>
+            </div>
+            <span class="cat__tag" aria-hidden="true">Quote →</span>
+          </a>
         </li>
       ))}
-    </ol>
+    </ul>
   </div>
 </section>

@@ -82,39 +82,9 @@ function setup() {
     });
   });
 
-  /* what we make: sticky cards shrink back as the next one covers them */
+  /* what we make: the catalogue grid */
   const mm = gsap.matchMedia();
-  const cards = $$('[data-stack-card]');
-  mm.add('(min-width: 601px)', () => {
-    cards.forEach((card, i) => {
-      const inner = card.querySelector('.stack__inner')!;
-      const next = cards[i + 1];
-      gsap.from(inner, { y: 120, rotate: i % 2 ? 2 : -2, autoAlpha: 0, duration: 1.1, ease: 'power3.out', scrollTrigger: { trigger: card, start: 'top 92%', once: true } });
-      if (next) {
-        gsap.to(inner, {
-          scale: 0.9, yPercent: -3, autoAlpha: 0.35, ease: 'none',
-          scrollTrigger: { trigger: next, start: 'top bottom', end: 'top 20%', scrub: true },
-        });
-      }
-    });
-  });
-  mm.add('(max-width: 600px)', () => {
-    cards.forEach((card, i) => {
-      gsap.fromTo(card.querySelector('.stack__inner'), { y: 90, rotate: i % 2 ? 3 : -3, scale: 0.92, autoAlpha: 0.2 }, {
-        y: 0, rotate: 0, scale: 1, autoAlpha: 1, ease: 'none',
-        scrollTrigger: { trigger: card, start: 'top bottom', end: 'top 55%', scrub: 0.5 },
-      });
-    });
-  });
-  $$('[data-stack-media] img, [data-stack-media] .ph').forEach((m) => {
-    gsap.fromTo(m, { yPercent: -7, scale: 1.08 }, {
-      yPercent: 7, scale: 1, ease: 'none',
-      scrollTrigger: { trigger: m.closest('.stack__card'), start: 'top bottom', end: 'bottom top', scrub: true },
-    });
-  });
-  $$('.stack__copy').forEach((c) => {
-    gsap.from(c.children, { y: 30, autoAlpha: 0, duration: 0.8, stagger: 0.07, ease: 'power3.out', scrollTrigger: { trigger: c, start: 'top 80%', once: true } });
-  });
+  catalog(mm);
 
   /* process: rail fills, steps light up */
   const steps = $$('[data-process-step]');
@@ -142,6 +112,101 @@ function setup() {
     backgroundColor: 'rgba(243,221,205,.55)', ease: 'none',
     scrollTrigger: { trigger: '.pk', start: 'top 70%', end: 'center center', scrub: true },
   });
+}
+
+/* ---------------------------------------------------------
+   Catalogue grid (inspired by Codrops' Sticky Grid Scroll and
+   Infinite Parallax Grid, without pinning, which is fragile in
+   Instagram's in-app browser):
+   1. the cards assemble from a scattered pile at the centre as
+      the section scrolls in, images wiping open
+   2. while you pass, alternate columns drift opposite ways and
+      each photo drifts inside its frame
+   Phones get a lighter staggered rise instead of the scatter.
+   --------------------------------------------------------- */
+function catalog(mm: gsap.MatchMedia) {
+  const grid = $('[data-catalog]');
+  if (!grid) return;
+  const items = $$('[data-cat-item]', grid);
+  const cards = items.map((i) => i.querySelector<HTMLElement>('.cat__card')!);
+  const media = items.map((i) => i.querySelector<HTMLElement>('[data-cat-media]')!);
+  const imgs = items.map((i) => i.querySelector<HTMLElement>('[data-cat-media] img, [data-cat-media] .ph')!);
+
+  mm.add('(min-width: 901px)', () => {
+    // where each card sits relative to the middle of the grid, and which
+    // on-screen column it is in (the list order doesn't tell you that)
+    const g = grid.getBoundingClientRect();
+    const cx = g.left + g.width / 2;
+    // the pile sits just inside the top of the grid: on screen from the
+    // moment the section arrives, and clear of the heading above it
+    const cy = g.top + 110;
+    const lefts = [...new Set(items.map((el) => Math.round(el.getBoundingClientRect().left)))].sort((a, b) => a - b);
+    const info = items.map((el) => {
+      const r = el.getBoundingClientRect();
+      const dx = cx - (r.left + r.width / 2);
+      const dy = cy - (r.top + r.height / 2);
+      return { dx, dy, dist: Math.hypot(dx, dy), col: lefts.indexOf(Math.round(r.left)) };
+    });
+    const far = Math.max(...info.map((o) => o.dist)) || 1;
+
+    // 1. assemble while it's on screen: starts as the grid enters, finishes
+    //    as its middle reaches the middle of the screen, rippling outwards
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: grid, start: 'top 78%', end: 'center 55%', scrub: 0.9 },
+    });
+    // the deck appears at once, as a fanned pile
+    tl.fromTo(items, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.15, stagger: 0.012, ease: 'none' }, 0);
+    items.forEach((el, i) => {
+      const o = info[i];
+      const at = 0.08 + (o.dist / far) * 0.5;
+      tl.fromTo(el,
+        { x: o.dx, y: o.dy, rotation: gsap.utils.random(-18, 18), scale: 0.5 },
+        { x: 0, y: 0, rotation: 0, scale: 1, ease: 'power2.inOut', duration: 1, immediateRender: true }, at)
+        .fromTo(media[i], { clipPath: 'inset(100% 0% 0% 0% round 14px)' }, { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'power2.out', duration: 0.7 }, at + 0.25)
+        .fromTo(imgs[i], { scale: 1.5 }, { scale: 1, ease: 'power2.out', duration: 1 }, at + 0.2);
+    });
+
+    // 2. once assembled, alternate columns drift opposite ways while you
+    //    pass (on the card, so it never fights the assembly on the item)
+    cards.forEach((c, i) => {
+      const dir = info[i].col % 2 ? -1 : 1;
+      gsap.fromTo(c, { yPercent: 0 }, {
+        yPercent: -9 * dir, ease: 'none',
+        scrollTrigger: { trigger: grid, start: 'center 55%', end: 'bottom top', scrub: 0.6 },
+      });
+    });
+
+    return () => tl.kill();
+  });
+
+  mm.add('(max-width: 900px)', () => {
+    ScrollTrigger.batch(items, {
+      start: 'top 92%',
+      once: true,
+      onEnter: (batch) =>
+        gsap.fromTo(batch, { y: 70, rotation: (i) => (i % 2 ? 4 : -4), autoAlpha: 0 }, {
+          y: 0, rotation: 0, autoAlpha: 1, duration: 0.9, ease: 'power3.out', stagger: 0.08, overwrite: true,
+        }),
+    });
+    media.forEach((m) =>
+      gsap.fromTo(m, { clipPath: 'inset(100% 0% 0% 0%)' }, {
+        clipPath: 'inset(0% 0% 0% 0%)', duration: 1, ease: 'power3.out',
+        scrollTrigger: { trigger: m, start: 'top 92%', once: true },
+      }));
+    // two columns, gently out of step while you scroll
+    cards.forEach((c, i) =>
+      gsap.fromTo(c, { yPercent: i % 2 ? 6 : -2 }, {
+        yPercent: i % 2 ? -6 : 2, ease: 'none',
+        scrollTrigger: { trigger: grid, start: 'top bottom', end: 'bottom top', scrub: 0.5 },
+      }));
+  });
+
+  // every photo drifts inside its frame, on all screen sizes
+  imgs.forEach((im) =>
+    gsap.fromTo(im, { yPercent: -5 }, {
+      yPercent: 5, ease: 'none',
+      scrollTrigger: { trigger: im.closest('.cat__item'), start: 'top bottom', end: 'bottom top', scrub: true },
+    }));
 }
 
 function gallery(mm: gsap.MatchMedia) {
