@@ -1,0 +1,57 @@
+name: Deploy to GitHub Pages
+
+# Builds the site from the published content in Supabase and publishes it.
+# Runs on every push to main, by hand from the Actions tab, or when the
+# studio panel's Publish button sends a "content-published" event.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  repository_dispatch:
+    types: [content-published]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# a newer publish replaces an older one still in progress
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # When the custom domain is ready, set the repository variables
+      # SITE_URL (e.g. https://mynsera.in) and BASE_PATH (/) instead of
+      # changing this file.
+      - name: Build
+        run: npm run build
+        env:
+          SITE_URL: ${{ vars.SITE_URL || 'https://jeremygideonbareh.github.io' }}
+          BASE_PATH: ${{ vars.BASE_PATH || '/dream_craft/' }}
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
