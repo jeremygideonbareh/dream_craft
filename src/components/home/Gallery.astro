@@ -1,4 +1,7 @@
 ---
+// "From the studio": every photo at once, as a mosaic wall. On laptops the
+// section pins and the camera pulls back from one hero photo to reveal the
+// whole wall. Motion lives in scripts/motion/home.ts (wall()).
 import Pic from '../Pic.astro';
 import { loadContent } from '../../content/load';
 import { url } from '../../lib/images';
@@ -7,19 +10,22 @@ const g = home.gallery;
 const items = gallery.filter((x) => x.visible);
 ---
 <section class="gal" id="gallery">
-  <div class="gal__pin">
-    <div class="gal__head">
-      <h2 class="h-lg" data-split="chars">{g.title} <span class="it">{g.titleAccent}</span></h2>
+  <div class="gal__pin" data-gal-pin>
+    <div class="gal__head" data-gal-head>
+      <h2 class="h-lg">{g.title} <span class="it">{g.titleAccent}</span></h2>
       <a href={url('work/')} class="link link--light magnetic" data-cursor="All">{g.link} <i>→</i></a>
     </div>
-    <div class="gal__track" id="galTrack">
-      {items.map((x) => (
-        <a class="gal__item" href={url(`quote/?product=${x.product}&ref=${encodeURIComponent(x.id)}`)} data-cursor="Like this">
-          <div class="gal__img" data-drift="0.07"><Pic src={x.image} alt={x.alt} widths={[400, 700]} sizes="(max-width: 900px) 72vw, 26vw" /></div>
-          <span class="gal__cap"><b>{x.title}</b><span>{g.itemHint}</span></span>
-        </a>
+    <ul class="wall" data-wall>
+      {items.map((x, i) => (
+        <li class:list={['wall__tile', { 'wall__tile--hero': i === 0 }]} data-wall-tile>
+          <a class="wall__link" href={url(`quote/?product=${x.product}&ref=${encodeURIComponent(x.id)}`)} data-cursor="Like this">
+            <div class="wall__img" data-wall-img>
+              <Pic src={x.image} alt={x.alt} widths={i === 0 ? [600, 1000, 1400] : [360, 640, 900]} sizes={i === 0 ? '(max-width: 900px) 92vw, 34vw' : '(max-width: 900px) 46vw, 17vw'} />
+            </div>
+            <span class="wall__cap"><b>{x.title}</b><em>{g.itemHint}</em></span>
+          </a>
+        </li>
       ))}
-    </div>
-    <div class="gal__bar" aria-hidden="true"><i id="galBar"></i></div>
+    </ul>
   </div>
 </section>

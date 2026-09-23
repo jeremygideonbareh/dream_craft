@@ -141,24 +141,46 @@ html.js [data-hero-lede]{visibility:hidden}
 .process__step:not(.is-on) h3{color:rgba(51,36,27,.4)}
 
 /* =========================================================
-   GALLERY
+   GALLERY: the mosaic wall
+   Six columns, three rows on a laptop, sized so the whole wall fits
+   on one screen while the section is pinned. The first photo is the
+   hero in the middle; every twelfth tile pattern repeats for more.
    ========================================================= */
 .gal{background:var(--ink);color:var(--cream);overflow:clip}
-.gal__pin{height:100svh;display:flex;flex-direction:column;justify-content:center;gap:2rem;padding:3rem 0}
-.gal__head{width:min(100% - 2*var(--gutter),var(--wrap));margin-inline:auto;display:flex;align-items:flex-end;justify-content:space-between;gap:2rem}
+.gal__pin{min-height:100svh;display:flex;flex-direction:column;justify-content:center;gap:clamp(1.2rem,2.5vh,2rem);padding:clamp(4.5rem,9vh,5.5rem) 0 2.5rem}
+.gal__head{width:min(100% - 2*var(--gutter),var(--wrap));margin-inline:auto;display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;
+  position:relative;z-index:2;text-shadow:0 2px 24px rgba(20,14,10,.75)}  /* stays in front of the wall while it pulls back */
 .gal__head .it{color:var(--blush-2)}
+.gal__head .link{white-space:nowrap;flex:none}
 .link--light{border-color:rgba(251,245,236,.25);color:var(--cream)}
 .link--light:hover{background:var(--cream);color:var(--ink);border-color:var(--cream)}
-.gal__track{display:flex;gap:1.3rem;padding-inline:max(var(--gutter),calc((100vw - var(--wrap))/2));will-change:transform}
-.gal__item{flex:none;width:clamp(240px,26vw,350px);display:block}
-.gal__img{overflow:hidden;border-radius:18px;aspect-ratio:4/5;background:#4a372b}
-.gal__img img{width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform .9s var(--ease),filter .5s}
-.gal__item:hover .gal__img img{transform:scale(1.14)}
-.gal__cap{display:flex;flex-direction:column;gap:.15rem;padding:.9rem .2rem 0}
-.gal__cap b{font-family:var(--f-disp);font-weight:500;font-size:1.05rem}
-.gal__cap span{font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--blush-2)}
-.gal__bar{width:min(100% - 2*var(--gutter),var(--wrap));margin-inline:auto;height:1px;background:rgba(251,245,236,.2)}
-.gal__bar i{display:block;height:100%;background:var(--terra);transform:scaleX(0);transform-origin:left}
+
+.wall{
+  --gap:clamp(.5rem,1vw,.9rem);--wall-h:min(66svh,640px);
+  width:min(100% - 2*var(--gutter),var(--wrap));margin:0 auto;
+  display:grid;grid-template-columns:repeat(6,1fr);
+  grid-auto-rows:calc((var(--wall-h) - 2 * var(--gap)) / 3);
+  grid-auto-flow:dense;gap:var(--gap);will-change:transform;
+}
+.wall__tile{min-width:0;min-height:0}
+.wall__tile--hero{grid-column:3 / span 2;grid-row:1 / span 2}
+.wall__tile:nth-child(12n+3){grid-row:span 2}
+.wall__tile:nth-child(12n+7),.wall__tile:nth-child(12n+10){grid-column:span 2}
+.wall__link{position:relative;display:block;width:100%;height:100%;border-radius:14px;overflow:hidden;background:#4a372b;transition:opacity .45s var(--ease)}
+.wall__img{position:absolute;inset:0;overflow:hidden}
+.wall__img img{position:absolute;inset:-8% 0;width:100%;height:116%;object-fit:cover;will-change:transform;transition:filter .6s var(--ease)}
+.wall__link::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(20,14,10,.8),transparent 55%);opacity:0;transition:opacity .5s var(--ease)}
+.wall__cap{position:absolute;left:.8rem;right:.8rem;bottom:.7rem;z-index:1;display:flex;flex-direction:column;gap:.15rem;transform:translateY(120%);opacity:0;transition:transform .6s var(--ease),opacity .4s var(--ease)}
+.wall__cap b{font-family:var(--f-disp);font-weight:500;font-size:clamp(.95rem,1.2vw,1.15rem);color:var(--cream)}
+.wall__cap em{font-style:normal;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--blush-2)}
+.wall__tile--hero .wall__cap b{font-size:clamp(1.3rem,2vw,1.8rem)}
+@media (hover:hover){
+  .wall__link:hover::after{opacity:1}
+  .wall__link:hover .wall__cap{transform:none;opacity:1}
+  .wall__link:hover .wall__img img{filter:saturate(1.12)}
+  .wall:hover .wall__link{opacity:.4}
+  .wall .wall__tile:hover .wall__link{opacity:1}
+}
 
 /* =========================================================
    PACKAGES
@@ -284,10 +306,8 @@ html.reduced .thread{opacity:.5}
 /* =========================================================
    REDUCED MOTION: final states, native scrolling
    ========================================================= */
-html.reduced .gal__pin{height:auto;padding:5rem 0}
-html.reduced .gal__track{overflow-x:auto;padding-bottom:1rem;scroll-snap-type:x mandatory}
-html.reduced .gal__item{scroll-snap-align:start}
-html.reduced .gal__img img{transform:none}
+html.reduced .wall__cap{transform:none;opacity:1}
+html.reduced .wall__link::after{opacity:1}
 html.reduced .process__step h3{color:var(--ink)}
 html.reduced .process__rail i{transform:none}
 
@@ -309,11 +329,13 @@ html.reduced .process__rail i{transform:none}
   .cat{--cols:3}
   .process__grid{grid-template-columns:1fr}
   .process__intro{position:static}
-  .gal__pin{height:auto;padding:4.5rem 0}
-  .gal__track{overflow-x:auto;padding-bottom:1rem;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
-  .gal__track::-webkit-scrollbar{display:none}
-  .gal__item{width:72vw;scroll-snap-align:center}
-  .gal__bar{display:block}
+  .gal__pin{min-height:0;padding:4.5rem 0}
+  .wall{grid-template-columns:repeat(2,1fr);grid-auto-rows:44vw}
+  .wall__tile--hero{grid-column:1 / span 2;grid-row:span 2}
+  .wall__tile:nth-child(12n+7),.wall__tile:nth-child(12n+10){grid-column:span 2}
+  .wall__link::after{opacity:1}
+  .wall__cap{transform:none;opacity:1}
+  .wall__cap em{display:none}
   .story__grid{grid-template-columns:1fr}
   .story__media{max-width:460px}
   .story__badge{right:-.5rem;width:100px;height:100px}

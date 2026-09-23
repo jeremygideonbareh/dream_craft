@@ -98,7 +98,7 @@ function setup() {
   });
 
   /* gallery */
-  gallery(mm);
+  wall(mm);
 
   /* final CTA grows out of the page */
   gsap.fromTo('[data-cta]', { scale: 0.86, borderRadius: 80 }, {
@@ -209,53 +209,84 @@ function catalog(mm: gsap.MatchMedia) {
     }));
 }
 
-function gallery(mm: gsap.MatchMedia) {
-  const track = $('#galTrack');
-  if (!track) return;
-  const items = $$('.gal__item', track);
+/* ---------------------------------------------------------
+   Gallery wall (after the zoom-and-offset phase of Codrops' Sticky
+   Grid Scroll): on laptops the section pins, the view starts zoomed
+   right into the hero photo, and scrolling pulls the camera back to
+   reveal the whole wall while the columns slide in from opposite
+   ends. Phones get tiles rising in from alternating sides, no pin.
+   --------------------------------------------------------- */
+function wall(mm: gsap.MatchMedia) {
+  const pin = $('[data-gal-pin]');
+  const grid = $('[data-wall]');
+  if (!pin || !grid) return;
+  const tiles = $$('[data-wall-tile]', grid);
+  const imgs = tiles.map((t) => t.querySelector<HTMLElement>('[data-wall-img] img')).filter(Boolean) as HTMLElement[];
+  const hero = tiles[0];
+  const head = $('[data-gal-head]');
 
   mm.add('(min-width: 901px)', () => {
-    const dist = () => Math.max(0, track.scrollWidth - window.innerWidth);
-    const tween = gsap.to(track, {
-      x: () => -dist(), ease: 'none',
-      scrollTrigger: {
-        trigger: '.gal', start: 'top top', end: () => '+=' + dist(), pin: '.gal__pin', scrub: 0.8,
-        invalidateOnRefresh: true, anticipatePin: 1,
-        onUpdate: (self) => gsap.set('#galBar', { scaleX: self.progress }),
-      },
+    // pinning only works if the whole wall fits on screen (a very long
+    // gallery added in the admin panel falls back to a simple reveal)
+    if (grid.offsetHeight > window.innerHeight * 0.8 || !hero) {
+      gsap.from(tiles, { y: 60, autoAlpha: 0, duration: 0.9, stagger: 0.05, ease: 'power3.out', scrollTrigger: { trigger: grid, start: 'top 85%', once: true } });
+      return;
+    }
+
+    // zoomed in so the hero fills the stage, centred on the hero
+    const g = grid.getBoundingClientRect();
+    const h = hero.getBoundingClientRect();
+    // capped, so the hero stays sharp and its neighbours peek in at the edges
+    const zoom = Math.min(1.75, g.width / h.width, (window.innerHeight * 0.82) / h.height);
+    const origin = `${h.left - g.left + h.width / 2}px ${h.top - g.top + h.height / 2}px`;
+    const heroCx = h.left + h.width / 2;
+    const cols = [...new Set(tiles.map((t) => Math.round(t.getBoundingClientRect().left)))].sort((a, b) => a - b);
+
+    const tl = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: { trigger: pin, start: 'top top', end: '+=170%', pin: true, scrub: 0.8, anticipatePin: 1 },
     });
-    items.forEach((item, i) => {
-      gsap.fromTo(item, { y: i % 2 ? 50 : -30, rotate: i % 2 ? 2 : -2 }, {
-        y: i % 2 ? -30 : 50, rotate: i % 2 ? -2 : 2, ease: 'none',
-        scrollTrigger: { trigger: item, containerAnimation: tween, start: 'left right', end: 'right left', scrub: true },
-      });
-      gsap.fromTo(item.querySelector('img'), { scale: 1.35 }, {
-        scale: 1.05, ease: 'none',
-        scrollTrigger: { trigger: item, containerAnimation: tween, start: 'left right', end: 'center center', scrub: true },
-      });
+
+    tl.fromTo(grid, { scale: zoom, transformOrigin: origin }, { scale: 1, duration: 1, ease: 'power2.inOut' }, 0)
+      // the title arrives as soon as the wall has pulled back clear of it
+      .fromTo(head, { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: 0.25, ease: 'power2.out' }, 0.42);
+
+    tiles.forEach((t, i) => {
+      if (t === hero) return;
+      const r = t.getBoundingClientRect();
+      const col = cols.indexOf(Math.round(r.left));
+      const side = r.left + r.width / 2 < heroCx ? -1 : 1;
+      // columns arrive from opposite ends, and slide in from the sides
+      tl.fromTo(t,
+        { yPercent: col % 2 ? -70 : 70, xPercent: 25 * side, autoAlpha: 0 },
+        { yPercent: 0, xPercent: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out' },
+        0.15 + Math.abs(col - (cols.length - 1) / 2) * 0.06);
     });
+    // the hero photo settles inside its frame as the camera pulls back
+    const heroImg = hero.querySelector('img');
+    if (heroImg) tl.fromTo(heroImg, { scale: 1.25 }, { scale: 1, duration: 1, ease: 'power2.inOut' }, 0);
+
+    return () => tl.kill();
   });
 
-  // touch: native swipe, but items still react to their position
   mm.add('(max-width: 900px)', () => {
-    gsap.from($$('.gal__img', track), { x: 80, autoAlpha: 0, duration: 0.9, stagger: 0.06, ease: 'power3.out', scrollTrigger: { trigger: track, start: 'top 85%', once: true } });
-    const bar = $('#galBar');
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      const mid = window.innerWidth / 2;
-      items.forEach((it) => {
-        const r = it.getBoundingClientRect();
-        const d = Math.min(1, Math.abs(r.left + r.width / 2 - mid) / window.innerWidth);
-        gsap.set(it, { scale: 1 - d * 0.14, rotate: ((r.left + r.width / 2 - mid) / window.innerWidth) * 6 });
-      });
-      if (bar) gsap.set(bar, { scaleX: track.scrollLeft / Math.max(1, track.scrollWidth - track.clientWidth) });
-    };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
-    track.addEventListener('scroll', onScroll, { passive: true });
-    update();
-    return () => track.removeEventListener('scroll', onScroll);
+    ScrollTrigger.batch(tiles, {
+      start: 'top 90%',
+      once: true,
+      onEnter: (batch) =>
+        gsap.fromTo(batch, { x: (i) => (i % 2 ? 60 : -60), rotation: (i) => (i % 2 ? 5 : -5), autoAlpha: 0 }, {
+          x: 0, rotation: 0, autoAlpha: 1, duration: 0.9, stagger: 0.08, ease: 'power3.out', overwrite: true,
+        }),
+    });
+    gsap.from(head, { y: 40, autoAlpha: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: head, start: 'top 88%', once: true } });
   });
+
+  // every photo drifts inside its frame
+  imgs.forEach((im) =>
+    gsap.fromTo(im, { yPercent: -6 }, {
+      yPercent: 6, ease: 'none',
+      scrollTrigger: { trigger: im.closest('[data-wall-tile]'), start: 'top bottom', end: 'bottom top', scrub: true },
+    }));
 }
 
 registerPage({ setup, intro, ambient });
