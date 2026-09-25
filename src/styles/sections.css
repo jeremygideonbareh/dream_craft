@@ -166,6 +166,9 @@ html.js [data-hero-lede]{visibility:hidden}
 .wall__tile--hero{grid-column:3 / span 2;grid-row:1 / span 2}
 .wall__tile:nth-child(12n+3){grid-row:span 2}
 .wall__tile:nth-child(12n+7),.wall__tile:nth-child(12n+10){grid-column:span 2}
+/* wide tiles crop the top and bottom off a photo; studio shots are taken
+   from slightly above, so the subject sits low in the frame */
+.wall__tile:nth-child(12n+7) img,.wall__tile:nth-child(12n+10) img{object-position:center 68%}
 .wall__link{position:relative;display:block;width:100%;height:100%;border-radius:14px;overflow:hidden;background:#4a372b;transition:opacity .45s var(--ease)}
 .wall__img{position:absolute;inset:0;overflow:hidden}
 .wall__img img{position:absolute;inset:-8% 0;width:100%;height:116%;object-fit:cover;will-change:transform;transition:filter .6s var(--ease)}

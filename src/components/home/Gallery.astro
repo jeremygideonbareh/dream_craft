@@ -7,7 +7,9 @@ import { loadContent } from '../../content/load';
 import { url } from '../../lib/images';
 const { home, gallery } = await loadContent();
 const g = home.gallery;
-const items = gallery.filter((x) => x.visible);
+// the wall is designed to fit one screen, so it shows the first twelve;
+// the Work page shows every photo
+const items = gallery.filter((x) => x.visible).slice(0, 12);
 ---
 <section class="gal" id="gallery">
   <div class="gal__pin" data-gal-pin>
