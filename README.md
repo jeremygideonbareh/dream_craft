@@ -91,6 +91,23 @@ after publishing changes from the admin panel to see them locally.
 - **Reviewing enquiries:** the studio panel at `/admin`. Staff see the images, requirements and contact
   details, set a status, add internal notes and a quoted amount, and reply on WhatsApp in one tap.
 
+### Enquiry emails
+
+Every new enquiry emails the studio the full details, with a button into the panel. Replying to
+that email answers the customer directly. Sending uses Resend from inside the database (pg_net),
+so an email problem can never slow down or lose an enquiry. The key lives in Supabase Vault as
+`resend_api_key`, never in this repo. Settings are rows in `app_config`:
+
+| key | what it does |
+|---|---|
+| `notify_email` | who gets the studio alert (empty = off) |
+| `email_from` | sender for the alert; `onboarding@resend.dev` until the domain is verified |
+| `customer_from` | sender for the customer's automatic confirmation (empty = off; needs a verified domain) |
+| `admin_url` | link to the studio panel used in the alert |
+
+Until `mynsera.in` is verified in Resend, Resend only delivers to the email address that owns the
+Resend account, so the customer confirmation stays off until then.
+
 To apply the schema to a fresh project, run `supabase/migrations/*.sql` in the SQL editor.
 
 ## Open items before launch
@@ -102,5 +119,5 @@ To apply the schema to a fresh project, run `supabase/migrations/*.sql` in the S
 - [ ] Domain in Mynsera's name, plus hosting (Cloudflare Pages or Netlify) on Mynsera's account
 - [ ] Save the host's deploy hook so Publish rebuilds the site (see docs/admin-panel.md)
 - [ ] Create the first admin login, then invite the rest of the team
-- [ ] Email notifications: studio alert + customer confirmation (Resend + a Supabase Edge Function; needs the domain)
+- [ ] Email notifications: built. Set the alert inbox now; the customer confirmation switches on once the domain is verified in Resend
 - [ ] Spam protection upgrade: Cloudflare Turnstile once hosting is chosen
