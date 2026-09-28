@@ -1,0 +1,15 @@
+# Cloudflare Pages response headers (ignored by other hosts)
+
+# built assets have hashed names, so they can be cached for a year
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# the studio panel stays out of search engines
+/admin/*
+  X-Robots-Tag: noindex, nofollow
