@@ -12,7 +12,7 @@ export default defineConfig({
   integrations: [
     svelte(),
     // the studio panel is private, so it stays out of search engines
-    sitemap({ filter: (page) => !page.includes('/admin') }),
+    sitemap({ filter: (page) => !page.includes('/admin') && !page.includes('/404') }),
   ],
   // images uploaded from the admin panel are optimised at build time
   image: { domains: ['ttgkrrqzmrlublrbhxex.supabase.co'] },

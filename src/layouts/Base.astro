@@ -22,7 +22,7 @@ const footProducts = products.filter((p) => p.visible).slice(0, 4);
 interface Props {
   title?: string;
   description?: string;
-  page: 'home' | 'work' | 'pricing' | 'quote' | 'privacy' | 'terms';
+  page: 'home' | 'work' | 'pricing' | 'quote' | 'privacy' | 'terms' | '404';
 }
 const { title, description = brand.description, page } = Astro.props;
 const fullTitle = title ? `${title} | ${brand.display}` : `${brand.display}: ${brand.tagline}`;
@@ -69,7 +69,7 @@ const chat = 'M12 2.2a9.8 9.8 0 0 0-8.5 14.7L2.2 21.8l5-1.3A9.8 9.8 0 1 0 12 2.2
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
   <meta name="theme-color" content="#FBF5EC" />
-  <link rel="canonical" href={canonical} />
+  {page === '404' ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
   <meta property="og:type" content="website" />
   <meta property="og:title" content={fullTitle} />
   <meta property="og:description" content={description} />
