@@ -6,6 +6,15 @@ import { createClient, type Session } from '@supabase/supabase-js';
 import { backend } from '../data/backend';
 import { defaults, STAFF_DOCS, type DocKey } from '../content/defaults';
 
+// an invite or password-reset email lands here signed in; read the link type
+// before the client consumes the URL, so we can ask for a new password
+const linkParams = new URLSearchParams(location.hash.slice(1));
+const linkType = linkParams.get('type');
+// an expired or already-used email link comes back with an error instead
+export const linkError = linkParams.get('error_code') === 'otp_expired'
+  ? 'That email link has expired or was already used. Use "Forgot password" to get a new one.'
+  : linkParams.get('error_description') || '';
+
 export const sb = createClient(backend.url, backend.key);
 export { defaults, STAFF_DOCS };
 export type Role = 'admin' | 'staff';
@@ -19,6 +28,7 @@ export const app = $state({
   docs: {} as Record<string, Doc>,
   loading: true,
   checking: false,   // looking up this login's role
+  needsPassword: linkType === 'invite' || linkType === 'recovery',
   error: '',
   toast: '',
 });
@@ -45,7 +55,10 @@ export function toast(msg: string) {
 export async function initSession() {
   const { data } = await sb.auth.getSession();
   await setSession(data.session);
-  sb.auth.onAuthStateChange((_e, s) => { setSession(s); });
+  sb.auth.onAuthStateChange((e, s) => {
+    if (e === 'PASSWORD_RECOVERY') app.needsPassword = true;
+    setSession(s);
+  });
   app.loading = false;
 }
 
@@ -65,6 +78,14 @@ export const signIn = (email: string, password: string) => sb.auth.signInWithPas
 export const signUp = (email: string, password: string) =>
   sb.auth.signUp({ email, password, options: { emailRedirectTo: location.href } });
 export const resetPassword = (email: string) => sb.auth.resetPasswordForEmail(email, { redirectTo: location.href });
+export async function setPassword(password: string) {
+  const res = await sb.auth.updateUser({ password });
+  if (!res.error) {
+    app.needsPassword = false;
+    history.replaceState(null, '', location.pathname);   // drop the one-time link
+  }
+  return res;
+}
 export const signOut = () => sb.auth.signOut();
 
 /* ---------- content ---------- */

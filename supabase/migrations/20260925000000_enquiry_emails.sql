@@ -20,7 +20,7 @@ insert into public.app_config (key, value) values
   ('notify_email',  ''),
   ('email_from',    'Mynsera Studio <onboarding@resend.dev>'),
   ('customer_from', ''),
-  ('admin_url',     'https://jeremygideonbareh.github.io/dream_craft/admin/')
+  ('admin_url',     'https://mynsera.in/admin/')
 on conflict (key) do nothing;
 
 -- escape text for an HTML email

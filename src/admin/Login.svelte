@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { signIn, signUp, resetPassword, toast, brandParts } from './store.svelte';
+  import { signIn, signUp, resetPassword, toast, brandParts, linkError } from './store.svelte';
 
   let mode = $state<'in' | 'up' | 'reset'>('in');
   let email = $state('');
   let password = $state('');
   let busy = $state(false);
-  let msg = $state('');
+  let msg = $state(linkError);
+  if (linkError) history.replaceState(null, '', location.pathname);
 
   async function go() {
     msg = '';

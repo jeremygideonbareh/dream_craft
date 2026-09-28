@@ -1,6 +1,7 @@
 <script lang="ts">
   /* Admin panel shell: sign in, choose a screen, publish changes. */
   import Login from './Login.svelte';
+  import SetPassword from './SetPassword.svelte';
   import Enquiries from './Enquiries.svelte';
   import Editor from './Editor.svelte';
   import Team from './Team.svelte';
@@ -49,6 +50,8 @@
   <p class="boot">Loading…</p>
 {:else if !app.session}
   <Login />
+{:else if app.needsPassword}
+  <SetPassword />
 {:else if !app.me || !app.me.active}
   <div class="login">
     <div class="login__box">
