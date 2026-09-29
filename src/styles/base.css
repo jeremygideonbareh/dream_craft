@@ -82,10 +82,12 @@ svg{display:block}
   display:inline-flex;align-items:center;justify-content:center;gap:.7rem;position:relative;overflow:hidden;
   min-height:52px;padding:.95rem 2rem;border-radius:999px;isolation:isolate;
   font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;font-weight:500;
-  transition:color .45s var(--ease),transform .3s var(--ease);
+  /* the press effect uses `scale`, never `transform`: GSAP animates buttons'
+     transform, and a CSS transition on it left them stuck part-way */
+  transition:color .45s var(--ease),scale .3s var(--ease);
   -webkit-tap-highlight-color:transparent;
 }
-.btn:active{transform:scale(.97)}
+.btn:active{scale:.97 !important}   /* GSAP writes scale:none inline */
 .btn span,.btn svg{position:relative;z-index:2}
 .btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:transform .45s var(--ease)}
 .btn:hover svg{transform:translateX(5px)}
