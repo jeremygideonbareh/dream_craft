@@ -174,7 +174,7 @@ export async function publish(keys: DocKey[]) {
   const { error } = await sb.rpc('publish_content', { keys: allowed, note: null });
   if (error) { toast(error.message); return false; }
   await loadDocs();
-  toast(allowed.length === 1 ? 'Published. The site rebuilds in a minute.' : `Published ${allowed.length} sections.`);
+  toast(`Published${allowed.length > 1 ? ` ${allowed.length} sections` : ''}. The website updates within about 15 minutes.`);
   return true;
 }
 
