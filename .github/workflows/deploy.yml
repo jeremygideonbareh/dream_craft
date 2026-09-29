@@ -1,27 +1,52 @@
 name: Deploy to GitHub Pages
 
 # Builds the site from the published content in Supabase and publishes it.
-# Runs on every push to main, by hand from the Actions tab, or when the
-# studio panel's Publish button sends a "content-published" event.
+# Runs on every push to main, by hand from the Actions tab, and every ten
+# minutes when something has been published from the studio panel since the
+# last build (the live site carries a fingerprint of the content it was
+# built from, so a check with nothing new stops before building).
 on:
   push:
     branches: [main]
   workflow_dispatch:
   repository_dispatch:
     types: [content-published]
+  schedule:
+    - cron: '*/10 * * * *'
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# a newer publish replaces an older one still in progress
-concurrency:
-  group: pages
-  cancel-in-progress: true
+env:
+  CONTENT_URL: https://ttgkrrqzmrlublrbhxex.supabase.co/rest/v1/published_content?select=key,doc&order=key
+  # the public (publishable) key, the same one the website itself uses
+  CONTENT_KEY: sb_publishable_dkmJBFswoa6uN1DjbASFpg_eCsR4YJ4
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.cmp.outputs.changed }}
+    steps:
+      - id: cmp
+        run: |
+          now=$(curl -sf "$CONTENT_URL" -H "apikey: $CONTENT_KEY" | sha256sum | cut -c1-64)
+          site="${{ vars.SITE_URL || 'https://jeremygideonbareh.github.io' }}${{ vars.BASE_PATH || '/dream_craft/' }}content-version.txt"
+          live=$(curl -sfL "$site" || true)
+          echo "content $now, live site $live"
+          if [ -n "$now" ] && [ "$now" = "$live" ]; then echo "changed=false" >> "$GITHUB_OUTPUT"; else echo "changed=true" >> "$GITHUB_OUTPUT"; fi
+
   build:
+    needs: check
+    # scheduled runs only build when there is newly published content
+    if: github.event_name != 'schedule' || needs.check.outputs.changed == 'true'
+    # builds queue one after another rather than cancelling each other, so a
+    # routine check can never cut short a deploy that is already running
+    concurrency:
+      group: pages-build
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,6 +58,12 @@ jobs:
 
       - run: npm ci
 
+      # fingerprint the content before building: anything published while
+      # the build runs shows up as a change on the next check
+      - name: Fingerprint content
+        run: |
+          curl -sf "$CONTENT_URL" -H "apikey: $CONTENT_KEY" | sha256sum | cut -c1-64 > content-version.txt
+
       # When the custom domain is ready, set the repository variables
       # SITE_URL (e.g. https://mynsera.in) and BASE_PATH (/) instead of
       # changing this file.
@@ -42,12 +73,17 @@ jobs:
           SITE_URL: ${{ vars.SITE_URL || 'https://jeremygideonbareh.github.io' }}
           BASE_PATH: ${{ vars.BASE_PATH || '/dream_craft/' }}
 
+      - run: cp content-version.txt dist/content-version.txt
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
     needs: build
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     environment:
       name: github-pages
