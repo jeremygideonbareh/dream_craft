@@ -11,6 +11,7 @@
 
   const LONG = /lede|text|blurb|description|answer|note|hint|placeholder|consent|disclaimer|success|alt|tagline|start/i;
   const IMAGE = /^(image|cover|photo|logo)$/i;
+  const IMAGE_LIST = /^(images|photos)$/i;   // a list whose items are each one image
 
   const value = $derived(obj[k]);
   const name = $derived(label ?? humanize(String(k)));
@@ -75,7 +76,8 @@
     obj[k] = next;
   }
   const itemLabel = (it: any, i: number) =>
-    (it && typeof it === 'object' && (it.title || it.name || it.question || it.label || it.value)) || `Item ${i + 1}`;
+    (it && typeof it === 'object' && (it.title || it.name || it.question || it.label || it.value))
+    || (IMAGE_LIST.test(String(k)) ? (i === 0 ? 'Main photo' : `Photo ${i + 1}`) : `Item ${i + 1}`);
 </script>
 
 {#if IMAGE.test(String(k)) && typeof value === 'string'}
@@ -133,7 +135,9 @@
             <button class="ico ico--del" onclick={() => confirm('Remove this item?') && removeItem(i)} title="Remove">×</button>
           </div>
         </div>
-        {#if item && typeof item === 'object' && !Array.isArray(item)}
+        {#if IMAGE_LIST.test(String(k)) && typeof item === 'string'}
+          <div class="item__body"><ImageField bind:value={obj[k][i]} label="Image" /></div>
+        {:else if item && typeof item === 'object' && !Array.isArray(item)}
           <div class="item__body">
             {#each Object.keys(item) as key}
               <Self obj={item} k={key} depth={depth + 1} />

@@ -35,6 +35,8 @@ async function fetchContent(): Promise<Content> {
   for (const { key: k, doc } of rows) {
     if (k in out && doc != null) out[k] = merge(out[k], doc);
   }
+  // a photo slot added in the panel but left empty isn't a photo
+  for (const p of out.products as { images: string[] }[]) p.images = (p.images ?? []).filter(Boolean);
   return out as Content;
 }
 
