@@ -1,5 +1,6 @@
 <script lang="ts">
   import { signIn, signUp, resetPassword, toast, brandParts, linkError } from './store.svelte';
+  import PasswordInput from './PasswordInput.svelte';
 
   let mode = $state<'in' | 'up' | 'reset'>('in');
   let email = $state('');
@@ -35,7 +36,7 @@
       {#if mode !== 'reset'}
         <label class="f">
           <span>Password</span>
-          <input type="password" bind:value={password} required minlength="8" autocomplete={mode === 'up' ? 'new-password' : 'current-password'} />
+          <PasswordInput bind:value={password} minlength={8} autocomplete={mode === 'up' ? 'new-password' : 'current-password'} />
         </label>
       {/if}
       <button class="btn btn--go" type="submit" disabled={busy}>

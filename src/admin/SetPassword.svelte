@@ -1,6 +1,7 @@
 <script lang="ts">
   /* Shown after an invite or password-reset link: choose the password for this login. */
   import { app, setPassword, toast, brandParts } from './store.svelte';
+  import PasswordInput from './PasswordInput.svelte';
 
   let password = $state('');
   let again = $state('');
@@ -27,11 +28,11 @@
     <form onsubmit={(e) => { e.preventDefault(); go(); }}>
       <label class="f">
         <span>New password</span>
-        <input type="password" bind:value={password} required minlength="8" autocomplete="new-password" />
+        <PasswordInput bind:value={password} minlength={8} autocomplete="new-password" />
       </label>
       <label class="f">
         <span>Type it again</span>
-        <input type="password" bind:value={again} required minlength="8" autocomplete="new-password" />
+        <PasswordInput bind:value={again} minlength={8} autocomplete="new-password" />
       </label>
       <button class="btn btn--go" type="submit" disabled={busy}>{busy ? 'Saving…' : 'Save password'}</button>
     </form>
