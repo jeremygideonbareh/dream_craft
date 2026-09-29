@@ -38,7 +38,9 @@ if (page === 'home') {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: brand.display,
-    alternateName: brand.showFormerly ? brand.formerly : undefined,
+    // the name without its accent, and the old name, so searches for either find the studio
+    alternateName: [...new Set([brand.display.normalize('NFD').replace(/\p{Diacritic}/gu, ''), brand.formerly])]
+      .filter((n) => n && n !== brand.display),
     description: brand.description,
     url: Astro.site?.toString(),
     image: ogImage.toString(),

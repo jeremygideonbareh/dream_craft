@@ -1,6 +1,6 @@
-# mynsera (formerly Dream Craft)
+# Mynséra (formerly Dream Craft)
 
-Website for **Mynsera**, a studio in Shillong, Meghalaya, making custom wedding invitations, florals and
+Website for **Mynséra**, a studio in Shillong, Meghalaya, making custom wedding invitations, florals and
 personalised pieces. Its main job is to collect and qualify custom enquiries: customers browse, press
 **Get a quote**, upload inspiration, choose their requirements and see an approximate price. The studio
 then receives one complete enquiry.
@@ -112,12 +112,12 @@ To apply the schema to a fresh project, run `supabase/migrations/*.sql` in the S
 
 ## Open items before launch
 
-- [ ] Confirm the brand spelling and casing (the site uses *mynsera* as the wordmark, *Mynsera* in text)
+- [x] Brand spelling: *Mynséra* in text, *mynséra* as the wordmark. Web and email addresses stay `mynsera` (they cannot contain an accent)
 - [ ] WhatsApp number (admin panel → Settings), so the hand-off after an enquiry is pre-filled
 - [ ] Pricing assumptions to confirm (admin panel → Pricing): rush window (30 days) and range width (+35%)
 - [ ] Full-resolution photos from the Instagram export (current images are 480 px and carry the old "Dream Craft" watermark)
-- [ ] Domain in Mynsera's name, plus hosting (Cloudflare Pages or Netlify) on Mynsera's account
-- [ ] Save the host's deploy hook so Publish rebuilds the site (see docs/admin-panel.md)
-- [ ] Create the first admin login, then invite the rest of the team
+- [x] Domain `mynsera.in` (Hostinger), live on GitHub Pages. Move hosting to Cloudflare Pages on the studio's own account at handover
+- [x] Publish reaches the live site: a check every 10 minutes rebuilds when content changed (a deploy hook replaces this on Cloudflare)
+- [x] Admin logins created (each person sets a password with *Forgot password*)
 - [ ] Email notifications: built. Set the alert inbox now; the customer confirmation switches on once the domain is verified in Resend
 - [ ] Spam protection upgrade: Cloudflare Turnstile once hosting is chosen
