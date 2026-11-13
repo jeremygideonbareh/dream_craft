@@ -1,17 +1,21 @@
 ---
 // Shown for any address that doesn't exist, e.g. a mistyped link from Instagram.
+// The wording is edited in the admin panel under Settings → Not found.
 import Base from '../layouts/Base.astro';
+import { loadContent } from '../content/load';
 import { url } from '../lib/images';
+const { settings } = await loadContent();
+const n = settings.notFound;
 ---
-<Base page="404" title="Page not found" description="This page doesn't exist. Browse our work or ask for a quote.">
+<Base page="404" title={n.eyebrow} description={n.text}>
   <section class="phead">
     <div class="wrap">
-      <p class="eyebrow" data-reveal="left"><i></i>Page not found</p>
-      <h1 class="h-lg" data-split="chars">This page wandered off.</h1>
-      <p class="lede" data-split="words">The link may be old or mistyped. Everything we make is still here.</p>
+      <p class="eyebrow" data-reveal="left"><i></i>{n.eyebrow}</p>
+      <h1 class="h-lg" data-split="chars">{n.title}</h1>
+      <p class="lede" data-split="words">{n.text}</p>
       <p style="display:flex;gap:12px;flex-wrap:wrap;margin-top:28px" data-reveal="up">
-        <a href={url('/')} class="btn btn--quote"><span>Go to the home page</span></a>
-        <a href={url('work/')} class="btn btn--ghost"><span>See our work</span></a>
+        <a href={url('/')} class="btn btn--quote"><span>{n.homeButton}</span></a>
+        <a href={url('work/')} class="btn btn--ghost"><span>{n.workButton}</span></a>
       </p>
     </div>
   </section>

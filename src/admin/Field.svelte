@@ -9,7 +9,7 @@
   interface Props { obj: any; k: string | number; label?: string; depth?: number }
   let { obj, k, label, depth = 0 }: Props = $props();
 
-  const LONG = /lede|text|blurb|description|answer|note|hint|placeholder|consent|disclaimer|success|alt|tagline|start/i;
+  const LONG = /lede|text|blurb|description|answer|note|hint|placeholder|consent|disclaimer|success|alt|tagline|start|message|errors?$/i;
   const IMAGE = /^(image|cover|photo|logo)$/i;
   const IMAGE_LIST = /^(images|photos)$/i;   // a list whose items are each one image
 
@@ -36,6 +36,30 @@
     bulkDiscountPercent: 'Bulk discount (%)', customFromPerInvite: 'Custom invites from (₹ each)',
     foilNamesPerInvite: 'Foil names (₹ each)', foilFullPerInvite: 'Full-page foil (₹ each)',
     rushPerInvite: 'Rush order (₹ each)', nextSteps: 'What happens next (3 lines)',
+    // menu, footer and other site-wide wording
+    nav: 'Menu', ourWork: 'Our work link', whatWeMake: 'What we make link', howItWorks: 'How it works link',
+    quoteButton: 'Get a quote button', skipToContent: 'Skip link (screen readers only)',
+    formerlyLabel: 'Word before the old name', notFound: 'Page not found (mistyped links)',
+    homeButton: 'Home button', workButton: 'Our work button',
+    studioTitle: 'Studio column heading', pricingLink: 'Pricing link', privacyLink: 'Privacy link', termsLink: 'Terms link',
+    makeTitle: 'Products column heading', helloTitle: 'Contact column heading', instagramLabel: 'Instagram link word',
+    // home and work pages
+    whatsappButton: 'WhatsApp button', whatsappMessage: 'Pre-written WhatsApp message', scrollLabel: 'Scroll hint',
+    quoteLabel: 'Word on each card', madeToOrder: 'Line under products with no types', fullPricingLink: 'Link to the pricing page',
+    allFilter: 'First filter button', quoteThis: 'Word on each photo', emptyButton: 'Button when a filter is empty',
+    photosComingSoon: 'Label on products without photos',
+    // pricing wording
+    labels: 'Wording around the prices', starting: 'Word above each price', forQty: 'Line under each price',
+    chipCustom: 'Home page: custom invites', chipFoilNames: 'Home page: foil names', chipFoilFull: 'Home page: full-page foil',
+    chipRush: 'Home page: rush orders', chipBulk: 'Home page: bulk discount',
+    ruleCustom: 'Pricing page: custom invites', ruleFoilNames: 'Pricing page: foil names', ruleFoilFull: 'Pricing page: full-page foil',
+    ruleBulk: 'Pricing page: bulk discount', ruleRush: 'Pricing page: rush orders', bulkOff: 'Pricing page: discount figure',
+    startQuote: 'Link to the quote form', estimateLines: 'Lines in the price estimate',
+    // quote form
+    stepNames: 'Step names (progress bar, 7 steps)', form: 'Form labels', choices: 'Detail choices',
+    buttons: 'Buttons', review: 'Check & send step', errors: 'Messages when something is missing',
+    // legal pages
+    contactQuestion: 'Line at the end of both pages', contactWhatsapp: 'WhatsApp link text', contactOrEmail: 'Words before the email address',
   };
 
   function humanize(s: string) {
@@ -112,6 +136,7 @@
 {:else if typeof value === 'string'}
   <label class="f">
     <span>{name}</span>
+    {#if /\{\w+\}/.test(value)}<small class="f__hint">Words in {'{'}curly brackets{'}'} are filled in automatically: {value.match(/\{\w+\}/g)?.join(', ')}</small>{/if}
     {#if LONG.test(String(k)) || value.length > 90}
       <textarea rows={Math.min(6, Math.ceil(value.length / 70) + 1)} bind:value={obj[k]}></textarea>
     {:else}

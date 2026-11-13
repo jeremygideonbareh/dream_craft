@@ -3,7 +3,7 @@ import '../styles/base.css';
 import '../styles/sections.css';
 import Wordmark from '../components/Wordmark.astro';
 import { loadContent } from '../content/load';
-import { whatsappLink } from '../lib/site';
+import { whatsappLink, WHATSAPP_ICON } from '../lib/site';
 import { url } from '../lib/images';
 
 const { settings, products, pricing } = await loadContent();
@@ -11,11 +11,12 @@ const { brand, contact, footer } = settings;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(url('og.png'), Astro.site);
 
+const labels = settings.nav;
 const nav = [
-  { href: 'work/', label: 'Our work' },
-  { href: '#make', label: 'What we make' },
-  { href: 'pricing/', label: 'Packages' },
-  { href: '#process', label: 'How it works' },
+  { href: 'work/', label: labels.ourWork },
+  { href: '#make', label: labels.whatWeMake },
+  { href: 'pricing/', label: labels.packages },
+  { href: '#process', label: labels.howItWorks },
 ];
 const footProducts = products.filter((p) => p.visible).slice(0, 4);
 
@@ -61,7 +62,7 @@ if (page === 'pricing' && pricing.faqs.length) {
     })),
   });
 }
-const chat = 'M12 2.2a9.8 9.8 0 0 0-8.5 14.7L2.2 21.8l5-1.3A9.8 9.8 0 1 0 12 2.2Zm0 17.8a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20Zm4.4-6c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.5.1l-.8 1c-.1.2-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.5-.4h-.5a.9.9 0 0 0-.6.3 2.7 2.7 0 0 0-.9 2c0 1.2.9 2.4 1 2.5.1.2 1.7 2.6 4.2 3.7 1.6.7 2.2.7 3 .6.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.6-.4Z';
+const chat = WHATSAPP_ICON;
 ---
 <!doctype html>
 <html lang="en" data-page={page}>
@@ -111,14 +112,14 @@ const chat = 'M12 2.2a9.8 9.8 0 0 0-8.5 14.7L2.2 21.8l5-1.3A9.8 9.8 0 1 0 12 2.2
   </script>
 </head>
 <body>
-  <a class="sr-only" href="#main">Skip to content</a>
+  <a class="sr-only" href="#main">{labels.skipToContent}</a>
 
   <div class="loader" id="loader" aria-hidden="true">
     <div class="loader__panels"><span></span><span></span><span></span><span></span><span></span></div>
     <div class="loader__inner">
       <p class="loader__word"><Wordmark split /></p>
       <div class="loader__bar"><i></i></div>
-      <div class="loader__meta"><span>{brand.showFormerly ? `formerly ${brand.formerly}` : brand.tagline.split(",")[0]}</span><span>{contact.location.split(",")[0]}</span></div>
+      <div class="loader__meta"><span>{brand.showFormerly ? `${brand.formerlyLabel} ${brand.formerly}` : brand.tagline.split(",")[0]}</span><span>{contact.location.split(",")[0]}</span></div>
     </div>
   </div>
 
@@ -137,7 +138,7 @@ const chat = 'M12 2.2a9.8 9.8 0 0 0-8.5 14.7L2.2 21.8l5-1.3A9.8 9.8 0 1 0 12 2.2
     <div class="nav__inner">
       <a href={url('/')} class="brand" data-cursor="Home" aria-label={`${brand.display} home`}>
         <Wordmark />
-        {brand.showFormerly && <small>formerly {brand.formerly}</small>}
+        {brand.showFormerly && <small>{brand.formerlyLabel} {brand.formerly}</small>}
       </a>
       <nav class="nav__links" aria-label="Main">
         {nav.map((n) => <a href={href(n.href)} aria-current={current(n.href)}>{n.label}</a>)}
@@ -145,7 +146,7 @@ const chat = 'M12 2.2a9.8 9.8 0 0 0-8.5 14.7L2.2 21.8l5-1.3A9.8 9.8 0 1 0 12 2.2
       <div class="nav__tools">
         {page !== 'quote' && (
           <a href={url('quote/')} class="btn btn--quote btn--sm magnetic" data-cursor="Start">
-            <span>Get a quote</span>
+            <span>{labels.quoteButton}</span>
           </a>
         )}
         <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span></button>
@@ -155,10 +156,10 @@ const chat = 'M12 2.2a9.8 9.8 0 0 0-8.5 14.7L2.2 21.8l5-1.3A9.8 9.8 0 1 0 12 2.2
 
   <div class="drawer" id="drawer">
     <nav class="drawer__nav" aria-label="Mobile">
-      <a href={url('/')}><em>01</em>Home</a>
+      <a href={url('/')}><em>01</em>{labels.home}</a>
       {nav.map((n, i) => <a href={href(n.href)}><em>0{i + 2}</em>{n.label}</a>)}
     </nav>
-    <a href={url('quote/')} class="btn btn--quote"><span>Get a quote</span></a>
+    <a href={url('quote/')} class="btn btn--quote"><span>{labels.quoteButton}</span></a>
     <div class="drawer__foot">
       <span>{contact.location}</span>
       <a href={contact.instagramUrl} target="_blank" rel="noopener">{contact.instagramHandle}</a>
@@ -175,31 +176,31 @@ const chat = 'M12 2.2a9.8 9.8 0 0 0-8.5 14.7L2.2 21.8l5-1.3A9.8 9.8 0 1 0 12 2.2
         <div class="foot__col" data-reveal="up">
           <h4>{footer.startTitle}</h4>
           <p>{footer.startText}</p>
-          <a href={url('quote/')} class="btn btn--quote btn--sm"><span>Get a quote</span></a>
+          <a href={url('quote/')} class="btn btn--quote btn--sm"><span>{labels.quoteButton}</span></a>
         </div>
         <div class="foot__col" data-reveal="up">
-          <h4>Studio</h4>
-          <a href={url('work/')}>Our work</a>
-          <a href={url('pricing/')}>Packages &amp; pricing</a>
-          <a href={href('#process')}>How it works</a>
-          <a href={url('privacy/')}>Privacy notice</a>
-          <a href={url('terms/')}>Terms</a>
+          <h4>{footer.studioTitle}</h4>
+          <a href={url('work/')}>{labels.ourWork}</a>
+          <a href={url('pricing/')}>{footer.pricingLink}</a>
+          <a href={href('#process')}>{labels.howItWorks}</a>
+          <a href={url('privacy/')}>{footer.privacyLink}</a>
+          <a href={url('terms/')}>{footer.termsLink}</a>
         </div>
         <div class="foot__col" data-reveal="up">
-          <h4>We make</h4>
+          <h4>{footer.makeTitle}</h4>
           {footProducts.map((p) => <a href={url(`quote/?product=${p.id}`)}>{p.title}</a>)}
         </div>
         <div class="foot__col" data-reveal="up">
-          <h4>Say hello</h4>
-          <a href={contact.instagramUrl} target="_blank" rel="noopener">Instagram {contact.instagramHandle}</a>
-          <a href={whatsappLink(contact)} target="_blank" rel="noopener">WhatsApp</a>
+          <h4>{footer.helloTitle}</h4>
+          <a href={contact.instagramUrl} target="_blank" rel="noopener">{footer.instagramLabel} {contact.instagramHandle}</a>
+          <a href={whatsappLink(contact)} target="_blank" rel="noopener">{footer.whatsappLabel}</a>
           {contact.email && <a href={`mailto:${contact.email}`}>{contact.email}</a>}
           <p>{contact.location}<br />{contact.shipping}</p>
         </div>
       </div>
       <div class="foot__big" data-foot-word aria-hidden="true"><Wordmark /></div>
       <div class="foot__bar">
-        <p>&copy; {new Date().getFullYear()} {brand.display}.{brand.showFormerly && ` Formerly ${brand.formerly}.`}</p>
+        <p>&copy; {new Date().getFullYear()} {brand.display}.{brand.showFormerly && ` ${brand.formerlyLabel.charAt(0).toUpperCase()}${brand.formerlyLabel.slice(1)} ${brand.formerly}.`}</p>
         <p>{footer.madeIn}</p>
       </div>
     </div>
@@ -207,8 +208,8 @@ const chat = 'M12 2.2a9.8 9.8 0 0 0-8.5 14.7L2.2 21.8l5-1.3A9.8 9.8 0 1 0 12 2.2
 
   {page !== 'quote' && (
     <div class="qbar" id="qbar">
-      <a href={url('quote/')} class="btn btn--quote"><span>Get a quote</span><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" /></svg></a>
-      <a href={whatsappLink(contact)} class="qbar__wa" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg viewBox="0 0 24 24"><path d={chat} /></svg></a>
+      <a href={url('quote/')} class="btn btn--quote"><span>{labels.quoteButton}</span><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" /></svg></a>
+      <a href={whatsappLink(contact)} class="qbar__wa" target="_blank" rel="noopener" aria-label={footer.whatsappLabel}><svg viewBox="0 0 24 24"><path d={chat} /></svg></a>
     </div>
   )}
 

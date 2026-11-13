@@ -5,6 +5,7 @@
   import Enquiries from './Enquiries.svelte';
   import Editor from './Editor.svelte';
   import Team from './Team.svelte';
+  import Emails from './Emails.svelte';
   import { app, initSession, signOut, isAdmin, unpublished, unsaved, publish, brandParts } from './store.svelte';
   import type { DocKey } from '../content/defaults';
 
@@ -20,6 +21,7 @@
     { id: 'quotepage', label: 'Quote form', doc: 'quote', title: 'Quote form wording', hint: 'Step headings, budget ranges, occasions, colours and the thank-you screen.', admin: true },
     { id: 'legal', label: 'Privacy & terms', doc: 'legal', title: 'Privacy notice & terms', hint: 'The two legal pages. Anything in square brackets is a decision for you to confirm.', admin: true },
     { id: 'settings', label: 'Settings', doc: 'settings', title: 'Brand & contact', hint: 'Name, tagline, WhatsApp number, Instagram, the announcement bar and the footer.', admin: true },
+    { id: 'emails', label: 'Emails', admin: true },
     { id: 'team', label: 'Team', admin: true },
   ];
 
@@ -95,6 +97,8 @@
         <Enquiries />
       {:else if current.id === 'team'}
         <Team />
+      {:else if current.id === 'emails'}
+        <Emails />
       {:else if current.doc}
         {#key current.doc}
           <Editor docKey={current.doc} title={current.title ?? current.label} hint={current.hint} />

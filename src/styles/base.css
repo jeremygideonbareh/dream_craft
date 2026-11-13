@@ -97,6 +97,10 @@ svg{display:block}
 .btn--quote::after{background:var(--ink)}
 .btn--solid{background:var(--sage-d);color:var(--cream)}
 .btn--solid::after{background:var(--terra)}
+.btn--wa{background:var(--sage-d);color:var(--cream)}
+.btn--wa::after{background:var(--ink)}
+.btn--wa svg{fill:currentColor;stroke:none;width:19px;height:19px}
+.btn--wa:hover svg{transform:none}
 .btn--ghost{border:1px solid var(--line);color:var(--ink)}
 .btn--ghost::after{background:var(--ink)}
 .btn--ghost:hover{color:var(--cream)}

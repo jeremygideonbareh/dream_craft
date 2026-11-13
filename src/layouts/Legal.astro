@@ -9,7 +9,7 @@ interface Props {
   page: 'privacy' | 'terms';
 }
 const { doc, page } = Astro.props;
-const { settings } = await loadContent();
+const { settings, legal } = await loadContent();
 ---
 <Base page={page} title={doc.title} description={doc.intro.slice(0, 180)}>
   <section class="phead legal">
@@ -31,11 +31,11 @@ const { settings } = await loadContent();
           </section>
         ))}
         <p class="prose__contact">
-          Questions about this page? Message us on
-          <a href={whatsappLink(settings.contact)} target="_blank" rel="noopener">WhatsApp</a>
-          {settings.contact.email && <> or email <a href={`mailto:${settings.contact.email}`}>{settings.contact.email}</a></>}.
+          {legal.contactQuestion}
+          <a href={whatsappLink(settings.contact)} target="_blank" rel="noopener">{legal.contactWhatsapp}</a>
+          {settings.contact.email && <> {legal.contactOrEmail} <a href={`mailto:${settings.contact.email}`}>{settings.contact.email}</a></>}.
           <br />
-          <a href={url(page === 'privacy' ? 'terms/' : 'privacy/')}>{page === 'privacy' ? 'Terms' : 'Privacy notice'} →</a>
+          <a href={url(page === 'privacy' ? 'terms/' : 'privacy/')}>{page === 'privacy' ? legal.terms.title : legal.privacy.title} →</a>
         </p>
       </div>
     </div>

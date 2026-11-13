@@ -4,6 +4,7 @@
 import ProductArt from '../ProductArt.astro';
 import { loadContent } from '../../content/load';
 import { url } from '../../lib/images';
+import { fill } from '../../lib/site';
 const { home, products } = await loadContent();
 const m = home.make;
 const list = products.filter((p) => p.visible);
@@ -31,14 +32,14 @@ const tints = ['#F3DDCD', '#E6E2CF', '#EFD9D2', '#E3E6DA', '#F2E3C9'];
               <span class="cat__num">{String(i + 1).padStart(2, '0')}</span>
               <div class="cat__more" aria-hidden="true">
                 <p>{p.blurb}</p>
-                <span class="cat__go">Quote <svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" /></svg></span>
+                <span class="cat__go">{m.quoteLabel} <svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" /></svg></span>
               </div>
             </div>
             <div class="cat__body">
               <h3>{p.title}</h3>
-              <p class="cat__sub">{p.variants.length ? p.variants.map((v) => v.label).join(' · ') : `Made to order · per ${p.unit.replace(/s$/, '')}`}</p>
+              <p class="cat__sub">{p.variants.length ? p.variants.map((v) => v.label).join(' · ') : fill(m.madeToOrder, { unit: p.unit.replace(/s$/, '') })}</p>
             </div>
-            <span class="cat__tag" aria-hidden="true">Quote →</span>
+            <span class="cat__tag" aria-hidden="true">{m.quoteLabel} →</span>
           </a>
         </li>
       ))}

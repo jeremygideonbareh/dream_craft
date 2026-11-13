@@ -93,6 +93,7 @@ code{font-size:.85em;background:rgba(0,0,0,.06);padding:.1em .3em;border-radius:
 .f--row input[type=checkbox]:checked::after{transform:translateX(18px)}
 .f--row input[type=color]{width:52px;min-height:36px;padding:2px;flex:none}
 .f input[readonly]{background:var(--cream-2);color:var(--ink-2)}
+.f__hint{font-size:.78rem;color:var(--ink-2);margin-top:-.1rem}
 
 /* password box with a show/hide eye */
 .pw{position:relative}
@@ -186,3 +187,13 @@ code{font-size:.85em;background:rgba(0,0,0,.06);padding:.1em .3em;border-radius:
   .detail__list > div{grid-template-columns:1fr}
   .row__when{margin-left:0}
 }
+
+/* Emails screen */
+.fld-2{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem}
+@media (max-width:640px){.fld-2{grid-template-columns:1fr}}
+.email-test{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem;margin-top:.4rem;font-size:.88rem}
+.email-test .ok{color:var(--ok)}
+.email-test .fail{color:#b3261e}
+.card.is-off{opacity:.6}
+.card > .muted{margin:-.2rem 0 .9rem}
+.card .notice{margin:.2rem 0 .8rem}

@@ -107,15 +107,25 @@ export async function loadDocs() {
   app.docs = next;
 }
 
-// rebuild `val` with the key order of `tpl`, keeping anything extra at the end
-function ordered(tpl: unknown, val: unknown): unknown {
-  if (Array.isArray(val)) return val.map((v) => ordered(Array.isArray(tpl) ? tpl[0] : undefined, v));
+// Rebuild `val` with the key order of `tpl`, keeping anything extra at the end.
+// Fields the site has gained since this document was last saved are filled in
+// from the defaults, so every piece of wording on the site shows up here even
+// before anyone has edited it. Inside lists (products, photos) a missing field
+// starts blank rather than copying the first default item.
+function ordered(tpl: unknown, val: unknown, inList = false): unknown {
+  if (Array.isArray(val)) return val.map((v) => ordered(Array.isArray(tpl) ? tpl[0] : undefined, v, true));
   if (!val || typeof val !== 'object' || !tpl || typeof tpl !== 'object' || Array.isArray(tpl)) return val;
   const v = val as Record<string, unknown>;
+  const t = tpl as Record<string, unknown>;
   const out: Record<string, unknown> = {};
-  for (const k of Object.keys(tpl as Record<string, unknown>)) if (k in v) out[k] = ordered((tpl as Record<string, unknown>)[k], v[k]);
+  for (const k of Object.keys(t)) out[k] = k in v ? ordered(t[k], v[k], inList) : inList ? blank(t[k]) : structuredClone(t[k]);
   for (const k of Object.keys(v)) if (!(k in out)) out[k] = v[k];
   return out;
+}
+function blank(x: unknown): unknown {
+  if (Array.isArray(x)) return [];
+  if (x && typeof x === 'object') return Object.fromEntries(Object.entries(x).map(([k, v]) => [k, blank(v)]));
+  return typeof x === 'number' ? 0 : typeof x === 'boolean' ? false : '';
 }
 
 // edits that exist only in this browser and would be lost on a refresh

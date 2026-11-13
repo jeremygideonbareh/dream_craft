@@ -8,7 +8,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { gsap, REDUCED, $, $$, scrollToTarget } from './motion/core';
 import { estimateInvitations, isRush, inr, type Pricing } from '../lib/pricing';
-import { whatsappLink } from '../lib/site';
+import { whatsappLink, fill } from '../lib/site';
 import { backend } from '../data/backend';
 import type { Content, ProductDoc, Choice } from '../content/defaults';
 
@@ -21,6 +21,9 @@ const data = JSON.parse($('#qzData')!.textContent || '{}') as {
   contact: Content['settings']['contact'];
   thumbs: Record<string, { src: string; product: string }>;
 };
+// wording edited in the admin panel
+const T = data.copy;
+const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 const productById: Record<string, ProductDoc> = Object.fromEntries(data.products.map((p) => [p.id, p]));
 const sb = createClient(backend.url, backend.key, { auth: { persistSession: false } });
 
@@ -47,8 +50,8 @@ const product = (): ProductDoc | undefined => productById[one('product')];
 /* ---------- details step, built for the chosen product ---------- */
 function group(label: string, name: string, choices: Choice[], multi = false, hint = '') {
   const type = multi ? 'checkbox' : 'radio';
-  return `<div class="grp"><p class="grp__label">${label}${hint ? ` <small>${hint}</small>` : ''}</p><div class="chips">${choices
-    .map((c) => `<label class="ch"><input type="${type}" name="${name}" value="${c.value}"><span>${c.label}${c.note ? ` <em>${c.note}</em>` : ''}</span></label>`)
+  return `<div class="grp"><p class="grp__label">${esc(label)}${hint ? ` <small>${esc(hint)}</small>` : ''}</p><div class="chips">${choices
+    .map((c) => `<label class="ch"><input type="${type}" name="${name}" value="${esc(c.value)}"><span>${esc(c.label)}${c.note ? ` <em>${esc(c.note)}</em>` : ''}</span></label>`)
     .join('')}</div><p class="qz__err" data-err="${name}"></p></div>`;
 }
 
@@ -59,20 +62,20 @@ function buildDetails() {
   builtFor = p.id;
   let html = '';
   if (p.estimate) {
-    html += group('Package', 'tier', [
-      ...data.pricing.packages.map((k) => ({ value: k.id, label: k.name, note: `from ${inr(k.from)} / ${k.qty}` })),
-      { value: 'custom', label: 'Fully custom', note: `from ${inr(data.pricing.rules.customFromPerInvite)} each` },
-      { value: 'unsure', label: 'Help me choose', note: '' },
+    html += group(T.choices.package, 'tier', [
+      ...data.pricing.packages.map((k) => ({ value: k.id, label: k.name, note: fill(T.choices.packageFrom, { price: inr(k.from), qty: k.qty }) })),
+      { value: 'custom', label: T.choices.fullyCustom, note: fill(T.choices.fullyCustomFrom, { price: inr(data.pricing.rules.customFromPerInvite) }) },
+      { value: 'unsure', label: T.choices.helpMeChoose, note: '' },
     ]);
   }
-  if (p.variants.length) html += group('Type', 'variant', p.variants);
-  if (p.sizes.length) html += group('Size', 'size', p.sizes);
-  html += `<label class="fld" id="customSize" hidden><span>Custom size</span><input name="sizeCustom" maxlength="80" placeholder="e.g. 6 × 8 in" /></label>`;
-  if (p.shapes.length) html += group('Shape', 'shape', p.shapes);
-  if (p.materials.length) html += group(p.estimate ? 'Paper / material' : 'Material', 'material', p.materials);
-  if (p.finishes.length) html += group('Finishing', 'finishes', p.finishes, true, '(pick any)');
+  if (p.variants.length) html += group(T.choices.type, 'variant', p.variants);
+  if (p.sizes.length) html += group(T.choices.size, 'size', p.sizes);
+  html += `<label class="fld" id="customSize" hidden><span>${esc(T.choices.customSize)}</span><input name="sizeCustom" maxlength="80" placeholder="${esc(T.choices.customSizePlaceholder)}" /></label>`;
+  if (p.shapes.length) html += group(T.choices.shape, 'shape', p.shapes);
+  if (p.materials.length) html += group(p.estimate ? T.choices.paperMaterial : T.choices.material, 'material', p.materials);
+  if (p.finishes.length) html += group(T.choices.finishing, 'finishes', p.finishes, true, T.form.pickAny);
   $('#details')!.innerHTML = html;
-  $('#qtyUnit')!.textContent = p.unit;
+  $('#qtyLabel')!.textContent = fill(T.form.howMany, { unit: p.unit });
   $('#qtyQuick')!.innerHTML = quickQty(p).map((n) => `<button type="button" class="ch ch--btn" data-set-qty="${n}"><span>${n}</span></button>`).join('');
   const q = val('quantity')!;
   if (!q.dataset.touched) q.value = String(p.defaultQty);
@@ -120,10 +123,10 @@ function addFiles(files: FileList | File[]) {
   const room = backend.maxFiles - uploads.length;
   const all = Array.from(files);
   const list = all.filter((f) => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name));
-  if (list.length < all.length) flash('Only images can be added here.');
-  if (list.length > room) flash(`You can add up to ${backend.maxFiles} images.`);
+  if (list.length < all.length) flash(T.errors.onlyImages);
+  if (list.length > room) flash(fill(T.errors.tooManyImages, { count: backend.maxFiles }));
   list.slice(0, Math.max(0, room)).forEach((f) => {
-    if (f.size > 25 * 1024 * 1024) { flash(`${f.name} is too large.`); return; }
+    if (f.size > 25 * 1024 * 1024) { flash(fill(T.errors.imageTooLarge, { name: f.name })); return; }
     const u: Upload = { id: crypto.randomUUID(), name: f.name, preview: URL.createObjectURL(f), status: 'uploading' };
     uploads.push(u);
     upload(u, f);
@@ -138,9 +141,9 @@ function renderUploads() {
     .map((u) => `<li class="up__item is-${u.status}" data-id="${u.id}">
       <img src="${u.preview}" alt="" />
       ${u.status === 'uploading' ? '<span class="up__spin" aria-label="Uploading"></span>' : ''}
-      ${u.status === 'error' ? `<button type="button" class="up__retry" data-retry="${u.id}">Retry</button>` : ''}
-      ${u.gallery ? '<span class="up__tag">Our work</span>' : ''}
-      ${u.preview === BLANK ? '<span class="up__saved">Uploaded ✓</span>' : ''}
+      ${u.status === 'error' ? `<button type="button" class="up__retry" data-retry="${u.id}">${esc(T.buttons.retryUpload)}</button>` : ''}
+      ${u.gallery ? `<span class="up__tag">${esc(T.form.ourWorkTag)}</span>` : ''}
+      ${u.preview === BLANK ? `<span class="up__saved">${esc(T.form.uploadedTag)}</span>` : ''}
       <button type="button" class="up__rm" data-rm="${u.id}" aria-label="Remove ${u.name.replace(/"/g, '')}">×</button>
     </li>`)
     .join('');
@@ -184,26 +187,26 @@ const emailOk = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s);
 
 function validate(i: number): Record<string, string> {
   const e: Record<string, string> = {};
-  if (i === 0 && !one('product')) e.product = 'Choose what you would like made.';
-  if (i === 2 && product()?.sizes && one('size') === 'custom' && !val('sizeCustom')?.value.trim()) e.size = 'Tell us the custom size you have in mind.';
+  if (i === 0 && !one('product')) e.product = T.errors.product;
+  if (i === 2 && product()?.sizes && one('size') === 'custom' && !val('sizeCustom')?.value.trim()) e.size = T.errors.customSize;
   if (i === 3) {
     const q = +val('quantity')!.value;
-    if (!(q >= 1 && q <= 100000)) e.quantity = 'Enter a quantity (at least 1).';
-    if (!one('budget')) e.budget = 'Pick a budget range, or "Not sure yet".';
+    if (!(q >= 1 && q <= 100000)) e.quantity = T.errors.quantity;
+    if (!one('budget')) e.budget = T.errors.budget;
   }
   if (i === 4) {
     const d = val('eventDate')!.value;
     const flexible = val('dateFlexible')!.checked;
-    if (!d && !flexible) e.eventDate = 'Add your date, or tick "My date isn\'t fixed yet".';
-    if (d && new Date(d) < new Date(new Date().toDateString())) e.eventDate = 'That date has already passed.';
-    if (!val('location')!.value.trim()) e.location = 'Where is the celebration?';
+    if (!d && !flexible) e.eventDate = T.errors.date;
+    if (d && new Date(d) < new Date(new Date().toDateString())) e.eventDate = T.errors.datePassed;
+    if (!val('location')!.value.trim()) e.location = T.errors.location;
   }
   if (i === 5) {
-    if (val('name')!.value.trim().length < 2) e.name = 'Please enter your name.';
-    if (!phoneOk(val('phone')!.value)) e.phone = 'Enter a phone number with country code, e.g. +91 98765 43210.';
-    if (!val('waSame')!.checked && !phoneOk(val('whatsapp')!.value)) e.whatsapp = 'Enter your WhatsApp number.';
-    if (!emailOk(val('email')!.value.trim())) e.email = 'Enter a valid email so we can send your copy.';
-    if (!val('consent')!.checked) e.consent = 'Please tick the box so we can store your enquiry.';
+    if (val('name')!.value.trim().length < 2) e.name = T.errors.name;
+    if (!phoneOk(val('phone')!.value)) e.phone = T.errors.phone;
+    if (!val('waSame')!.checked && !phoneOk(val('whatsapp')!.value)) e.whatsapp = T.errors.whatsapp;
+    if (!emailOk(val('email')!.value.trim())) e.email = T.errors.email;
+    if (!val('consent')!.checked) e.consent = T.errors.consent;
   }
   return e;
 }
@@ -253,7 +256,7 @@ function go(to: number, focus = true) {
 
   $('#qzBack')!.hidden = step === 0;
   const next = $('#qzNext')!;
-  next.querySelector('span')!.textContent = step === LAST ? 'Send enquiry' : step === 1 && !uploads.length ? 'Skip for now' : 'Continue';
+  next.querySelector('span')!.textContent = step === LAST ? T.buttons.send : step === 1 && !uploads.length ? T.buttons.skip : T.buttons.continue;
   $$('[data-dot]').forEach((d, i) => { d.classList.toggle('is-done', i < step); d.classList.toggle('is-on', i === step); });
   gsap.to('#qzBar', { scaleX: step / LAST, duration: REDUCED ? 0 : 0.6, ease: 'power3.out' });
   updateEstimate();
@@ -262,7 +265,7 @@ function go(to: number, focus = true) {
 
 function next() {
   if (step === LAST) return submit();
-  if (step === 1 && uploads.some((u) => u.status === 'uploading')) { flash('Hold on, your images are still uploading…'); return; }
+  if (step === 1 && uploads.some((u) => u.status === 'uploading')) { flash(T.errors.stillUploading); return; }
   const errs = validate(step);
   showErrors(errs);
   if (Object.keys(errs).length) return;
@@ -275,9 +278,9 @@ function renderReview() {
   const p = product()!;
   const d = val('eventDate')!.value;
   const rows: [string, string, number][] = [
-    ['Making', [p.title, one('variant') && labelOf('variant', one('variant'))].filter(Boolean).join(' · '), 0],
-    ['Inspiration', uploads.length ? `${uploads.filter((u) => u.status === 'done').length} image(s) attached` : 'None added', 1],
-    ['Details', [
+    [T.review.making, [p.title, one('variant') && labelOf('variant', one('variant'))].filter(Boolean).join(' · '), 0],
+    [T.review.inspiration, uploads.length ? fill(T.review.imagesAttached, { count: uploads.filter((u) => u.status === 'done').length }) : T.review.noneAdded, 1],
+    [T.review.details, [
       one('tier') && labelOf('tier', one('tier')),
       one('size') && (one('size') === 'custom' ? val('sizeCustom')?.value : labelOf('size', one('size'))),
       one('shape') && labelOf('shape', one('shape')),
@@ -285,16 +288,15 @@ function renderReview() {
       ...checked('finishes').map((f) => labelOf('finishes', f)),
       ...checked('colours'),
       val('colourNotes')?.value,
-    ].filter(Boolean).join(' · ') || 'To discuss', 2],
-    ['Quantity & budget', `${val('quantity')!.value} ${p.unit} · ${one('budget')}`, 3],
-    ['Date & place', `${one('occasion')} · ${d ? new Date(d + 'T00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Date not fixed yet'} · ${val('location')!.value}`, 4],
-    ['Contact', `${val('name')!.value} · ${val('phone')!.value} · ${val('email')!.value}`, 5],
+    ].filter(Boolean).join(' · ') || T.review.toDiscuss, 2],
+    [T.review.quantityBudget, `${val('quantity')!.value} ${p.unit} · ${one('budget')}`, 3],
+    [T.review.datePlace, `${one('occasion')} · ${d ? new Date(d + 'T00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : T.review.dateNotFixed} · ${val('location')!.value}`, 4],
+    [T.review.contact, `${val('name')!.value} · ${val('phone')!.value} · ${val('email')!.value}`, 5],
   ];
   $('#review')!.innerHTML = rows
-    .map(([k, v, s]) => `<div><dt>${k}</dt><dd>${escapeHtml(v)}</dd><button type="button" class="rev__edit" data-goto="${s}">Edit</button></div>`)
+    .map(([k, v, s]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd><button type="button" class="rev__edit" data-goto="${s}">${esc(T.buttons.edit)}</button></div>`)
     .join('');
 }
-const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
 /* ---------- submit ---------- */
 async function submit() {
@@ -303,12 +305,12 @@ async function submit() {
     const errs = validate(i);
     if (Object.keys(errs).length) { go(i); setTimeout(() => showErrors(errs), 400); return; }
   }
-  if (uploads.some((u) => u.status === 'uploading')) { flash('Your images are still uploading, one moment…'); return; }
+  if (uploads.some((u) => u.status === 'uploading')) { flash(T.errors.stillUploading); return; }
 
   submitting = true;
   const btn = $<HTMLButtonElement>('#qzNext')!;
   btn.disabled = true;
-  btn.querySelector('span')!.textContent = 'Sending…';
+  btn.querySelector('span')!.textContent = T.buttons.sending;
   showErrors({});
 
   const p = product()!;
@@ -352,8 +354,8 @@ async function submit() {
   btn.disabled = false;
   if (error || !ref) {
     console.error('[quote] submit failed', error);
-    btn.querySelector('span')!.textContent = 'Try again';
-    const msg = error?.message?.includes('rate') ? 'We already have several enquiries from this number today. Message us on WhatsApp instead.' : 'Sorry, that didn\'t go through. Check your connection and try again. Your answers are saved.';
+    btn.querySelector('span')!.textContent = T.buttons.tryAgain;
+    const msg = error?.message?.includes('rate') ? T.errors.tooManyToday : T.errors.sendFailed;
     showErrors({ submit: msg });
     return;
   }
@@ -366,7 +368,8 @@ function success(ref: string, name: string, title: string) {
   $('#doneRef')!.textContent = ref;
   $('#doneName')!.textContent = name.split(' ')[0];
   const d = val('eventDate')!.value;
-  const msg = `Hi ${data.brand}! I just sent enquiry ${ref} on your website for ${title.toLowerCase()} (${val('quantity')!.value}${d ? `, ${d}` : ''}, ${val('location')!.value}).`;
+  const details = [val('quantity')!.value, d, val('location')!.value].filter(Boolean).join(', ');
+  const msg = fill(T.whatsappMessage, { brand: data.brand, ref, product: title.toLowerCase(), details });
   $<HTMLAnchorElement>('#doneWa')!.href = whatsappLink(data.contact, msg);
   const done = $('#done')!;
   form.hidden = true;

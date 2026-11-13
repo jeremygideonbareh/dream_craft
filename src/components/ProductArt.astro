@@ -2,10 +2,12 @@
 // A product's photo, or drawn line-art until photos are added in the admin.
 import Pic from './Pic.astro';
 import type { ProductDoc } from '../content/defaults';
+import { loadContent } from '../content/load';
 
 interface Props { product: ProductDoc; sizes?: string; eager?: boolean }
 const { product, sizes = '(max-width: 900px) 92vw, 44vw', eager = false } = Astro.props;
 const file = product.images[0];
+const { work } = await loadContent();
 
 const icons: Record<string, string> = {
   banners: 'M8 20h84M14 20l8 26 8-26M38 20l8 26 8-26M62 20l8 26 8-26',
@@ -18,8 +20,8 @@ const petal = 'M50 10c16 18 16 62 0 80-16-18-16-62 0-80ZM10 50c18-16 62-16 80 0-
 {file ? (
   <Pic src={file} alt={product.title} widths={[480, 800, 1200]} sizes={sizes} eager={eager} />
 ) : (
-  <div class="ph" role="img" aria-label={`${product.title}, photos coming soon`}>
+  <div class="ph" role="img" aria-label={`${product.title}, ${work.photosComingSoon.toLowerCase()}`}>
     <svg viewBox="0 0 100 100" aria-hidden="true"><path class="draw" d={icons[product.id] ?? petal} /></svg>
-    <b>Photos coming soon</b>
+    <b>{work.photosComingSoon}</b>
   </div>
 )}

@@ -10,8 +10,9 @@ import Cta from '../components/home/Cta.astro';
 import Thread from '../components/Thread.astro';
 import { loadContent } from '../content/load';
 import { url } from '../lib/images';
+import { whatsappLink, fill, WHATSAPP_ICON } from '../lib/site';
 
-const { home, products } = await loadContent();
+const { home, products, settings } = await loadContent();
 const h = home.hero;
 const marquee = products.filter((p) => p.visible).map((p) => p.short);
 // admins can reorder or remove sections in the admin panel
@@ -35,6 +36,11 @@ const order = home.sections.filter((s): s is keyof typeof sections => s in secti
           <a href={url('quote/')} class="btn btn--quote magnetic" data-intro data-cursor="Start">
             <span>{h.primaryButton}</span><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
           </a>
+          {h.whatsappButton && (
+            <a href={whatsappLink(settings.contact, fill(h.whatsappMessage, { brand: settings.brand.display }))} class="btn btn--wa magnetic" data-intro data-cursor="Chat" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d={WHATSAPP_ICON} /></svg><span>{h.whatsappButton}</span>
+            </a>
+          )}
           <a href={url('work/')} class="btn btn--ghost magnetic" data-intro data-cursor="Browse"><span>{h.secondaryButton}</span></a>
         </div>
         {h.trust.length > 0 && (
@@ -60,11 +66,11 @@ const order = home.sections.filter((s): s is keyof typeof sections => s in secti
         <svg class="hero__petal hero__petal--3" data-depth="2.6" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="26" /><circle cx="30" cy="30" r="12" /></svg>
       </div>
     </div>
-    <div class="hero__scroll" data-intro aria-hidden="true"><span>Scroll</span><i></i></div>
+    <div class="hero__scroll" data-intro aria-hidden="true"><span>{h.scrollLabel}</span><i></i></div>
   </section>
 
   {marquee.length > 0 && (
-    <section class="strip" aria-label="What we make">
+    <section class="strip" aria-label={settings.nav.whatWeMake}>
       <div class="strip__row" data-marquee="1">
         <div class="strip__set">{marquee.map((m) => <><span>{m}</span><em>✦</em></>)}</div>
       </div>

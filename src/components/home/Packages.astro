@@ -2,9 +2,11 @@
 import { loadContent } from '../../content/load';
 import { url } from '../../lib/images';
 import { inr } from '../../lib/pricing';
+import { fill } from '../../lib/site';
 const { home, pricing } = await loadContent();
 const h = home.packages;
 const r = pricing.rules;
+const L = pricing.labels;
 ---
 <section class="sec pk" id="packages">
   <div class="wrap">
@@ -18,21 +20,21 @@ const r = pricing.rules;
         <article class:list={['pk__card', { 'is-featured': p.featured }]} data-tilt>
           {p.featured && <span class="pk__tag">{pricing.featuredLabel}</span>}
           <h3>{p.name}</h3>
-          <p class="pk__from">starting</p>
+          <p class="pk__from">{L.starting}</p>
           <p class="pk__price">₹<span data-count={p.from}>{p.from.toLocaleString('en-IN')}</span></p>
-          <p class="pk__qty">for {p.qty} invites</p>
+          <p class="pk__qty">{fill(L.forQty, { qty: p.qty })}</p>
           <p class="pk__blurb">{p.blurb}</p>
-          <a href={url(`quote/?product=invitations&tier=${p.id}`)} class:list={['btn btn--sm magnetic', p.featured ? 'btn--light' : 'btn--ghost']} data-cursor="Quote"><span>Quote {p.name}</span></a>
+          <a href={url(`quote/?product=invitations&tier=${p.id}`)} class:list={['btn btn--sm magnetic', p.featured ? 'btn--light' : 'btn--ghost']} data-cursor="Quote"><span>{fill(L.quoteButton, { name: p.name })}</span></a>
         </article>
       ))}
     </div>
     <ul class="pk__extras" data-reveal-group>
-      <li class="chip">Custom invites from {inr(r.customFromPerInvite)} each</li>
-      <li class="chip">Foil names +{inr(r.foilNamesPerInvite)} each</li>
-      <li class="chip">Full-page foil +{inr(r.foilFullPerInvite)} each</li>
-      <li class="chip">Rush orders +{inr(r.rushPerInvite)} each</li>
-      <li class="chip">{r.bulkDiscountPercent}% off custom invites over {r.bulkDiscountAbove}</li>
+      <li class="chip">{fill(L.chipCustom, { price: inr(r.customFromPerInvite) })}</li>
+      <li class="chip">{fill(L.chipFoilNames, { price: inr(r.foilNamesPerInvite) })}</li>
+      <li class="chip">{fill(L.chipFoilFull, { price: inr(r.foilFullPerInvite) })}</li>
+      <li class="chip">{fill(L.chipRush, { price: inr(r.rushPerInvite) })}</li>
+      <li class="chip">{fill(L.chipBulk, { percent: r.bulkDiscountPercent, qty: r.bulkDiscountAbove })}</li>
     </ul>
-    <p class="pk__note" data-reveal="fade">{pricing.disclaimer} <a href={url('pricing/')}>Full pricing →</a></p>
+    <p class="pk__note" data-reveal="fade">{pricing.disclaimer} <a href={url('pricing/')}>{h.fullPricingLink}</a></p>
   </div>
 </section>

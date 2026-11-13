@@ -76,3 +76,26 @@ page sections appear and in what order.
 
 Not changeable here: page layouts and animations. Those live in the code, so a
 wrong click can't break the design.
+
+## Emails (admins)
+
+The **Emails** screen sets who is emailed about new enquiries (several
+addresses, separated by commas), the sender name and address, and whether
+customers get a confirmation email. **Send a test alert** checks the whole
+chain and reports what Resend answered.
+
+Until `mynsera.in` is verified in Resend, emails can only come from
+`onboarding@resend.dev` and only reach the Resend account's own address
+(mynsera@gmail.com). Verify the domain in Resend, add its DNS records at the
+domain host, then change both sender addresses to e.g. `hello@mynsera.in`
+and switch on customer confirmations.
+
+The screen needs `supabase/migrations/20261113000000_email_settings.sql`
+applied once. Until then it shows a notice and only the single alert
+address and sender can be changed.
+
+## Wording with {placeholders}
+
+Some wording contains words in curly brackets, such as `for {qty} invites`.
+The site fills these in (here, the number of invites), so keep them when
+editing. The panel lists the placeholders under each such field.
