@@ -14,6 +14,8 @@
   let refs = $state<string[]>([]);
   let notes = $state('');
   let quoted = $state<number | null>(null);
+  let received = $state<number | null>(null);
+  let request = $state<number | null>(null);
 
   const products = $derived((app.docs.products?.draft ?? []) as { id: string; title: string }[]);
   const gallery = $derived((app.docs.gallery?.draft ?? []) as { id: string; title: string }[]);
@@ -44,6 +46,8 @@
     open = e;
     notes = e.internal_notes ?? '';
     quoted = e.quoted_amount;
+    received = e.amount_received ?? null;
+    request = suggested(e);
     refs = await signedRefs(e.reference_paths);
   }
 
@@ -54,9 +58,12 @@
   }
   async function saveDetail() {
     if (!open) return;
-    if (await updateEnquiry(open.id, { internal_notes: notes, quoted_amount: quoted })) {
+    const patch: Partial<Enquiry> = { internal_notes: notes, quoted_amount: quoted };
+    if (tracksPayments(open)) patch.amount_received = received;
+    if (await updateEnquiry(open.id, patch)) {
       open.internal_notes = notes;
       open.quoted_amount = quoted;
+      if (tracksPayments(open)) open.amount_received = received;
       toast('Saved');
     }
   }
@@ -70,7 +77,7 @@
   }
 
   function csv() {
-    const cols = ['ref', 'created_at', 'status', 'product', 'quantity', 'budget', 'occasion', 'event_date', 'location', 'name', 'phone', 'whatsapp', 'email', 'estimate_low', 'estimate_high', 'quoted_amount'];
+    const cols = ['ref', 'created_at', 'status', 'product', 'quantity', 'budget', 'occasion', 'event_date', 'location', 'name', 'phone', 'whatsapp', 'email', 'estimate_low', 'estimate_high', 'quoted_amount', 'amount_received'];
     const esc = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
     const body = [cols.join(','), ...items.map((e) => cols.map((c) => esc((e as any)[c])).join(','))].join('\n');
     const a = document.createElement('a');
@@ -79,10 +86,39 @@
     a.click();
   }
 
-  const waLink = (e: Enquiry) => {
+  const waTo = (e: Enquiry, text: string) => {
     const n = (e.whatsapp || e.phone).replace(/\D/g, '');
-    return `https://wa.me/${n.length === 10 ? '91' + n : n}?text=${encodeURIComponent(`Hi ${e.name.split(' ')[0]}, thank you for your enquiry ${e.ref} with us.`)}`;
+    return `https://wa.me/${n.length === 10 ? '91' + n : n}?text=${encodeURIComponent(text)}`;
   };
+  const waLink = (e: Enquiry) => waTo(e, `Hi ${e.name.split(' ')[0]}, thank you for your enquiry ${e.ref} with us.`);
+
+  /* payments: no gateway. The customer gets a link to the /pay page with
+     their reference and amount filled in, pays by UPI or bank transfer and
+     sends a screenshot; the studio checks the bank, then records it here. */
+  const tracksPayments = (e: Enquiry) => 'amount_received' in e;
+  const inr = (n: number) => '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
+  const payCopy = $derived((app.docs.settings?.published?.payment ?? app.docs.settings?.draft?.payment) as { enabled?: boolean; customerMessage?: string } | undefined);
+  const suggested = (e: Enquiry) => {
+    const left = (e.quoted_amount ?? 0) - (e.amount_received ?? 0);
+    return left > 0 ? left : null;
+  };
+  const payLink = (e: Enquiry, amount: number | null) => {
+    const u = new URL('../pay/', location.href);
+    u.searchParams.set('ref', e.ref);
+    if (amount && amount > 0) u.searchParams.set('amount', String(amount));
+    return u.toString();
+  };
+  const payMessage = (e: Enquiry, amount: number | null) =>
+    (payCopy?.customerMessage || 'Hi {name}, you can pay for {ref} here: {link}')
+      .replace(/\{name\}/g, e.name.split(' ')[0])
+      .replace(/\{ref\}/g, e.ref)
+      .replace(/\{amount\}/g, amount ? inr(amount) : '')
+      .replace(/\{link\}/g, payLink(e, amount));
+  async function copyPayLink() {
+    if (!open) return;
+    try { await navigator.clipboard.writeText(payLink(open, request)); toast('Payment link copied'); }
+    catch { toast(payLink(open, request)); }
+  }
   const detail = (e: Enquiry) =>
     [e.tier, e.variant, e.size === 'custom' ? e.size_custom : e.size, e.shape, e.material, ...e.finishes, ...e.colours, e.colour_notes]
       .filter(Boolean).join(' · ') || '—';
@@ -164,7 +200,20 @@
       </div>
 
       <div class="detail__work">
-        <label class="f"><span>Quoted amount (₹)</span><input type="number" bind:value={quoted} /></label>
+        <div class="fld-2">
+          <label class="f"><span>Quoted amount (₹)</span><input type="number" min="0" bind:value={quoted} /></label>
+          {#if tracksPayments(open)}
+            <label class="f"><span>Amount received (₹)</span><input type="number" min="0" bind:value={received} /></label>
+          {/if}
+        </div>
+        {#if tracksPayments(open) && open.received_at}<p class="muted pay-note">Last recorded {new Date(open.received_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}. Only record money you have seen in the bank account, not a screenshot.</p>{/if}
+        {#if payCopy?.enabled !== false}
+          <div class="paylink">
+            <label class="f"><span>Ask for a payment (₹)</span><input type="number" min="0" bind:value={request} placeholder="Amount" /></label>
+            <a class="btn btn--sm btn--go" href={waTo(open, payMessage(open, request))} target="_blank" rel="noopener">Send payment link</a>
+            <button class="btn btn--sm btn--ghost" onclick={copyPayLink}>Copy link</button>
+          </div>
+        {/if}
         <label class="f"><span>Internal notes</span><textarea rows="3" bind:value={notes}></textarea></label>
       </div>
 

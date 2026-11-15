@@ -247,6 +247,7 @@ export interface Enquiry {
   reference_paths: string[]; gallery_refs: string[];
   estimate_low: number | null; estimate_high: number | null; estimate_lines: string[];
   quoted_amount: number | null; internal_notes: string | null; source: Record<string, string>;
+  amount_received?: number | null; received_at?: string | null;   // after the payments migration
 }
 
 export const STATUSES = ['new', 'reviewing', 'quoted', 'confirmed', 'in_production', 'dispatched', 'completed', 'lost', 'spam'] as const;

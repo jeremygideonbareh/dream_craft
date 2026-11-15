@@ -11,8 +11,8 @@ export default defineConfig({
   build: { format: 'directory' },
   integrations: [
     svelte(),
-    // the studio panel is private, so it stays out of search engines
-    sitemap({ filter: (page) => !page.includes('/admin') && !page.includes('/404') }),
+    // the studio panel, the not-found page and the payment page stay out of search engines
+    sitemap({ filter: (page) => !['/admin/', '/404', '/pay/'].some((p) => new URL(page).pathname.includes(p)) }),
   ],
   // images uploaded from the admin panel are optimised at build time
   image: { domains: ['ttgkrrqzmrlublrbhxex.supabase.co'] },

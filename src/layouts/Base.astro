@@ -3,7 +3,7 @@ import '../styles/base.css';
 import '../styles/sections.css';
 import Wordmark from '../components/Wordmark.astro';
 import { loadContent } from '../content/load';
-import { whatsappLink, WHATSAPP_ICON } from '../lib/site';
+import { whatsappLink, fill, WHATSAPP_ICON } from '../lib/site';
 import { url } from '../lib/images';
 
 const { settings, products, pricing } = await loadContent();
@@ -23,7 +23,7 @@ const footProducts = products.filter((p) => p.visible).slice(0, 4);
 interface Props {
   title?: string;
   description?: string;
-  page: 'home' | 'work' | 'pricing' | 'quote' | 'privacy' | 'terms' | '404';
+  page: 'home' | 'work' | 'pricing' | 'quote' | 'privacy' | 'terms' | '404' | 'pay';
 }
 const { title, description = brand.description, page } = Astro.props;
 const fullTitle = title ? `${title} | ${brand.display}` : `${brand.display}: ${brand.tagline}`;
@@ -63,6 +63,7 @@ if (page === 'pricing' && pricing.faqs.length) {
   });
 }
 const chat = WHATSAPP_ICON;
+const wa = whatsappLink(contact, fill(settings.whatsapp.message, { brand: brand.display }));
 ---
 <!doctype html>
 <html lang="en" data-page={page}>
@@ -72,7 +73,7 @@ const chat = WHATSAPP_ICON;
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
   <meta name="theme-color" content="#FBF5EC" />
-  {page === '404' ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+  {page === '404' || page === 'pay' ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
   <meta property="og:type" content="website" />
   <meta property="og:title" content={fullTitle} />
   <meta property="og:description" content={description} />
@@ -160,6 +161,7 @@ const chat = WHATSAPP_ICON;
       {nav.map((n, i) => <a href={href(n.href)}><em>0{i + 2}</em>{n.label}</a>)}
     </nav>
     <a href={url('quote/')} class="btn btn--quote"><span>{labels.quoteButton}</span></a>
+    <a href={wa} class="btn btn--wa" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={chat} /></svg><span>{settings.whatsapp.menuButton}</span></a>
     <div class="drawer__foot">
       <span>{contact.location}</span>
       <a href={contact.instagramUrl} target="_blank" rel="noopener">{contact.instagramHandle}</a>
@@ -185,6 +187,7 @@ const chat = WHATSAPP_ICON;
           <a href={href('#process')}>{labels.howItWorks}</a>
           <a href={url('privacy/')}>{footer.privacyLink}</a>
           <a href={url('terms/')}>{footer.termsLink}</a>
+          {settings.payment.enabled && settings.payment.showInFooter && <a href={url('pay/')}>{settings.payment.footerLink}</a>}
         </div>
         <div class="foot__col" data-reveal="up">
           <h4>{footer.makeTitle}</h4>
@@ -193,7 +196,7 @@ const chat = WHATSAPP_ICON;
         <div class="foot__col" data-reveal="up">
           <h4>{footer.helloTitle}</h4>
           <a href={contact.instagramUrl} target="_blank" rel="noopener">{footer.instagramLabel} {contact.instagramHandle}</a>
-          <a href={whatsappLink(contact)} target="_blank" rel="noopener">{footer.whatsappLabel}</a>
+          <a href={wa} target="_blank" rel="noopener">{footer.whatsappLabel}</a>
           {contact.email && <a href={`mailto:${contact.email}`}>{contact.email}</a>}
           <p>{contact.location}<br />{contact.shipping}</p>
         </div>
@@ -206,10 +209,16 @@ const chat = WHATSAPP_ICON;
     </div>
   </footer>
 
-  {page !== 'quote' && (
+  {page !== 'pay' && (
+    <a href={wa} class="wafab" target="_blank" rel="noopener" aria-label={settings.whatsapp.floatingLabel}>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d={chat} /></svg><span>{settings.whatsapp.floatingLabel}</span>
+    </a>
+  )}
+
+  {page !== 'quote' && page !== 'pay' && (
     <div class="qbar" id="qbar">
       <a href={url('quote/')} class="btn btn--quote"><span>{labels.quoteButton}</span><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" /></svg></a>
-      <a href={whatsappLink(contact)} class="qbar__wa" target="_blank" rel="noopener" aria-label={footer.whatsappLabel}><svg viewBox="0 0 24 24"><path d={chat} /></svg></a>
+      <a href={wa} class="qbar__wa" target="_blank" rel="noopener" aria-label={footer.whatsappLabel}><svg viewBox="0 0 24 24"><path d={chat} /></svg></a>
     </div>
   )}
 

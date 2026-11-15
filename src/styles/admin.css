@@ -197,3 +197,9 @@ code{font-size:.85em;background:rgba(0,0,0,.06);padding:.1em .3em;border-radius:
 .card.is-off{opacity:.6}
 .card > .muted{margin:-.2rem 0 .9rem}
 .card .notice{margin:.2rem 0 .8rem}
+
+/* enquiry: payment link */
+.paylink{display:flex;flex-wrap:wrap;align-items:flex-end;gap:.6rem;padding:.8rem;border-radius:12px;background:var(--cream-2);margin-bottom:.8rem}
+.paylink .f{margin:0;flex:1 1 10rem}
+.paylink .btn{min-height:42px}
+.pay-note{font-size:.8rem;margin:-.4rem 0 .8rem}

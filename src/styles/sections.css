@@ -356,3 +356,27 @@ html.reduced .process__rail i{transform:none}
   .tile{margin-bottom:.7rem}
   .tile__go{display:none}
 }
+
+/* =========================================================
+   PAYMENT PAGE (/pay)
+   ========================================================= */
+.pay__head .h-lg{max-width:16ch}
+.pay__for{display:flex;flex-wrap:wrap;gap:.8rem 2.4rem;margin-top:1.6rem;padding:1rem 1.3rem;border-radius:var(--r);background:#fff;border:1px solid var(--line);width:fit-content}
+.pay__for dt{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-2)}
+.pay__for dd{margin:.15rem 0 0;font-family:var(--f-disp);font-size:clamp(1.4rem,3vw,1.9rem)}
+.pay__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:1.2rem;align-items:start}
+.pay__card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:clamp(1.3rem,3vw,1.9rem);display:flex;flex-direction:column;gap:.9rem;align-items:flex-start}
+.pay__card--after{background:var(--cream-2)}
+.pay__muted{color:var(--ink-2);font-size:.92rem}
+.pay__qr{width:min(100%,260px);padding:.8rem;background:#fff;border:1px solid var(--line);border-radius:14px}
+.pay__qr img{width:100%;height:auto;display:block}
+.pay__rows{width:100%;margin:0}
+.pay__rows > div{display:grid;grid-template-columns:8.5rem 1fr;gap:.6rem;padding:.65rem 0;border-bottom:1px solid var(--line);align-items:center}
+.pay__rows > div:last-child{border-bottom:0}
+.pay__rows dt{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.pay__rows dd{margin:0;display:flex;justify-content:space-between;align-items:center;gap:.6rem;font-size:1rem;font-variant-numeric:tabular-nums;word-break:break-all}
+.pay__copy{flex:none;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--line);color:var(--ink);transition:background .25s,color .25s}
+.pay__copy:hover{background:var(--ink);color:var(--cream)}
+.pay__copy.is-done{background:var(--sage-d);border-color:var(--sage-d);color:var(--cream)}
+.pay__safety{font-size:.8rem;color:var(--ink-2);border-top:1px solid var(--line);padding-top:.8rem;margin-top:.2rem}
+@media (max-width:480px){.pay__rows > div{grid-template-columns:1fr;gap:.2rem}}

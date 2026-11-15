@@ -3,10 +3,10 @@ import Base from '../layouts/Base.astro';
 import { loadContent } from '../content/load';
 import { url } from '../lib/images';
 import { inr } from '../lib/pricing';
-import { fill } from '../lib/site';
+import { fill, whatsappLink } from '../lib/site';
 import Thread from '../components/Thread.astro';
 
-const { pricing } = await loadContent();
+const { pricing, settings } = await loadContent();
 const r = pricing.rules;
 const L = pricing.labels;
 ---
@@ -45,6 +45,7 @@ const L = pricing.labels;
       </div>
       <p class="pk__note" data-reveal="fade">{pricing.disclaimer}<br />{pricing.deliveryNote}</p>
       <p class="pk__note" data-reveal="fade">{pricing.otherProductsNote} <a href={url('quote/')}>{L.startQuote}</a></p>
+      <p class="pk__note" data-reveal="fade">{settings.whatsapp.pricingQuestion} <a href={whatsappLink(settings.contact, fill(settings.whatsapp.message, { brand: settings.brand.display }))} target="_blank" rel="noopener">{settings.whatsapp.pricingLink}</a></p>
     </div>
   </section>
 

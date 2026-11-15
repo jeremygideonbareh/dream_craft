@@ -7,6 +7,8 @@
 .qz__head{margin-bottom:1.6rem}
 .qz__head .eyebrow{margin-bottom:.8rem}
 .qz__sub{color:var(--ink-2);margin-top:.7rem;font-size:.92rem}
+.qz__wa{color:var(--ink-2);margin-top:.35rem;font-size:.88rem}
+.qz__wa a{color:var(--sage-d);font-weight:500;text-decoration:underline;text-underline-offset:3px}
 
 /* progress */
 .qz__progress{position:relative;display:flex;justify-content:space-between;margin-bottom:1.6rem;padding-bottom:.9rem}

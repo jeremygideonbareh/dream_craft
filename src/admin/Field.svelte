@@ -10,7 +10,7 @@
   let { obj, k, label, depth = 0 }: Props = $props();
 
   const LONG = /lede|text|blurb|description|answer|note|hint|placeholder|consent|disclaimer|success|alt|tagline|start|message|errors?$/i;
-  const IMAGE = /^(image|cover|photo|logo)$/i;
+  const IMAGE = /^(image|cover|photo|logo|qrImage)$/i;
   const IMAGE_LIST = /^(images|photos)$/i;   // a list whose items are each one image
 
   const value = $derived(obj[k]);

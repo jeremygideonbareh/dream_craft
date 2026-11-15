@@ -217,6 +217,18 @@ html.has-loader .loader{display:grid}
 .qbar__wa{width:48px;height:48px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--sage-d);color:#fff}
 .qbar__wa svg{width:22px;height:22px;fill:currentColor}
 
+/* desktop: a WhatsApp button in the corner that opens out on hover */
+.wafab{
+  position:fixed;right:1.5rem;bottom:1.5rem;z-index:640;display:flex;align-items:center;gap:0;height:56px;padding:0 16px;
+  border-radius:999px;background:var(--sage-d);color:var(--cream);box-shadow:0 18px 40px -16px rgba(30,40,25,.6);
+  font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;font-weight:500;transition:gap .4s var(--ease),background .3s;
+}
+.wafab svg{width:24px;height:24px;fill:currentColor;flex:none}
+.wafab span{max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .45s var(--ease)}
+.wafab:hover,.wafab:focus-visible{gap:.7rem;background:#3a4531}
+.wafab:hover span,.wafab:focus-visible span{max-width:16rem}
+.drawer .btn--wa{margin-top:.7rem}
+
 /* =========================================================
    FOOTER
    ========================================================= */
@@ -240,6 +252,7 @@ html.has-loader .loader{display:grid}
   .nav__links{display:none}
   .burger{display:flex}
   .qbar{display:flex}
+  .wafab{display:none}
   .foot__top{grid-template-columns:1fr 1fr;gap:2rem}
   .foot{padding-bottom:calc(6rem + env(safe-area-inset-bottom))}
 }

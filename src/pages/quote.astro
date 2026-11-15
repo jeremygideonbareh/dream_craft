@@ -5,7 +5,7 @@ import '../styles/quote.css';
 import ProductArt from '../components/ProductArt.astro';
 import { loadContent } from '../content/load';
 import { resolveImage, url } from '../lib/images';
-import { fill } from '../lib/site';
+import { fill, whatsappLink } from '../lib/site';
 
 const { quote, products, gallery, pricing, settings } = await loadContent();
 const visible = products.filter((p) => p.visible);
@@ -44,6 +44,7 @@ const F = quote.form;
         <p class="eyebrow" data-reveal="left"><i></i>{quote.eyebrow}</p>
         <h1 class="h-lg" data-split="chars">{quote.title} <span class="it">{quote.titleAccent}</span></h1>
         <p class="qz__sub">{quote.sub}</p>
+        <p class="qz__wa">{settings.whatsapp.quoteQuestion} <a href={whatsappLink(settings.contact, fill(settings.whatsapp.message, { brand: settings.brand.display }))} target="_blank" rel="noopener">{settings.whatsapp.quoteLink}</a></p>
       </header>
 
       <div class="qz__progress" aria-hidden="true">

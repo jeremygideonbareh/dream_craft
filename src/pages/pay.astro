@@ -1,0 +1,146 @@
+---
+// The payment page. Not in the menu or search engines: the studio sends each
+// customer a link from their enquiry in the studio panel, e.g.
+//   /pay/?ref=MYN-1024&amount=25000
+// and the page shows that reference and amount. Everything on it, including
+// the bank details and the UPI QR, is edited under Settings → Payment.
+import Base from '../layouts/Base.astro';
+import Pic from '../components/Pic.astro';
+import { loadContent } from '../content/load';
+import { whatsappLink, WHATSAPP_ICON } from '../lib/site';
+
+const { settings } = await loadContent();
+const pay = settings.payment;
+const { contact, brand } = settings;
+const L = pay.labels;
+const bank = [
+  { label: L.accountName, value: pay.accountName.trim(), copy: true },
+  { label: L.accountNumber, value: pay.accountNumber.replace(/\s/g, ''), copy: true },
+  { label: L.ifsc, value: pay.ifsc.replace(/\s/g, '').toUpperCase(), copy: true },
+  { label: L.bank, value: pay.bankName.trim(), copy: false },
+  { label: L.branch, value: pay.branch.trim(), copy: false },
+].filter((r) => r.value);
+const hasUpi = !!(pay.upiId.trim() || pay.qrImage);
+const hasBank = !!(pay.accountNumber.trim() && pay.ifsc.trim());
+
+// what the browser needs to fill in the reference, amount and links
+const client = {
+  brand: brand.display,
+  upiId: pay.upiId.trim(),
+  upiPayeeName: pay.upiPayeeName,
+  remarkHint: pay.remarkHint,
+  copied: pay.copied,
+  whatsappMessage: pay.whatsappMessage,
+  contact,
+};
+---
+<Base page="pay" title={pay.title} description={pay.intro}>
+  <section class="phead pay__head">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal="left"><i></i>{pay.eyebrow}</p>
+      <h1 class="h-lg" data-split="chars">{pay.title}</h1>
+      <p class="lede">{pay.intro}</p>
+      <dl class="pay__for" id="payFor" hidden>
+        <div id="payRefRow" hidden><dt>{pay.forReference}</dt><dd id="payRef"></dd></div>
+        <div id="payAmountRow" hidden><dt>{pay.amountLabel}</dt><dd id="payAmount"></dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="sec pay" style="padding-top:0">
+    <div class="wrap">
+      {!pay.enabled || (!hasUpi && !hasBank) ? (
+        <div class="pay__card">
+          <p>{pay.disabledText}</p>
+          <a class="btn btn--wa" href={whatsappLink(contact)} target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d={WHATSAPP_ICON} /></svg><span>{settings.whatsapp.floatingLabel}</span>
+          </a>
+        </div>
+      ) : (
+        <div class="pay__grid">
+          {hasUpi && (
+            <article class="pay__card">
+              <h2 class="h-md">{pay.upiTitle}</h2>
+              <p class="pay__muted">{pay.upiText}</p>
+              {pay.qrImage && <div class="pay__qr"><Pic src={pay.qrImage} alt={`UPI QR code for ${pay.upiPayeeName}`} widths={[320, 640]} sizes="280px" /></div>}
+              {pay.upiId.trim() && (
+                <dl class="pay__rows">
+                  <div><dt>{L.upiId}</dt><dd><span>{pay.upiId}</span><button type="button" class="pay__copy" data-copy={pay.upiId.trim()}>{pay.copy}</button></dd></div>
+                </dl>
+              )}
+              {pay.upiId.trim() && <a class="btn btn--quote pay__upi" id="payUpi" href="#"><span>{pay.upiButton}</span></a>}
+            </article>
+          )}
+          {hasBank && (
+            <article class="pay__card">
+              <h2 class="h-md">{pay.bankTitle}</h2>
+              <dl class="pay__rows">
+                {bank.map((r) => (
+                  <div><dt>{r.label}</dt><dd><span>{r.value}</span>{r.copy && <button type="button" class="pay__copy" data-copy={r.value}>{pay.copy}</button>}</dd></div>
+                ))}
+              </dl>
+              <p class="pay__muted" id="payRemark" hidden></p>
+            </article>
+          )}
+          <article class="pay__card pay__card--after">
+            <h2 class="h-md">{pay.afterTitle}</h2>
+            <p>{pay.afterText}</p>
+            <a class="btn btn--wa" id="payWa" href={whatsappLink(contact)} target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d={WHATSAPP_ICON} /></svg><span>{pay.whatsappButton}</span>
+            </a>
+            <p class="pay__safety">{pay.safetyNote}</p>
+          </article>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <script type="application/json" id="payData" set:html={JSON.stringify(client)}></script>
+  <script>
+    import { whatsappLink, fill } from '../lib/site';
+
+    const data = JSON.parse(document.getElementById('payData')!.textContent || '{}');
+    const q = new URLSearchParams(location.search);
+    // only a plain reference and amount are accepted from the link
+    const ref = /^[A-Z]{2,6}-\d{1,8}$/i.test(q.get('ref') || '') ? q.get('ref')!.toUpperCase() : '';
+    const n = Number(q.get('amount'));
+    const amount = Number.isFinite(n) && n > 0 && n < 1e8 ? Math.round(n * 100) / 100 : 0;
+    const inr = (x: number) => '₹' + x.toLocaleString('en-IN', { minimumFractionDigits: x % 1 ? 2 : 0, maximumFractionDigits: 2 });
+
+    const show = (id: string, text: string) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    };
+    if (ref || amount) document.getElementById('payFor')!.hidden = false;
+    if (ref) { show('payRef', ref); document.getElementById('payRefRow')!.hidden = false; }
+    if (amount) { show('payAmount', inr(amount)); document.getElementById('payAmountRow')!.hidden = false; }
+    const remark = document.getElementById('payRemark');
+    if (remark && ref) { remark.textContent = fill(data.remarkHint, { ref }); remark.hidden = false; }
+
+    // opens the customer's UPI app with everything filled in (phones only)
+    const upi = document.getElementById('payUpi') as HTMLAnchorElement | null;
+    if (upi) {
+      const params = new URLSearchParams({ pa: data.upiId, pn: data.upiPayeeName, cu: 'INR' });
+      if (amount) params.set('am', amount.toFixed(2));
+      if (ref) params.set('tn', ref);
+      upi.href = 'upi://pay?' + params.toString().replace(/\+/g, '%20');
+      if (!matchMedia('(pointer: coarse)').matches) upi.hidden = true;
+    }
+
+    const wa = document.getElementById('payWa') as HTMLAnchorElement | null;
+    if (wa) wa.href = whatsappLink(data.contact, fill(data.whatsappMessage, { brand: data.brand, ref: ref || 'my order', amount: amount ? inr(amount) : 'the advance' }));
+
+    document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => {
+      const label = b.textContent;
+      b.addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(b.dataset.copy!); }
+        catch {
+          const t = Object.assign(document.createElement('textarea'), { value: b.dataset.copy! });
+          document.body.append(t); t.select(); document.execCommand('copy'); t.remove();
+        }
+        b.textContent = data.copied; b.classList.add('is-done');
+        setTimeout(() => { b.textContent = label; b.classList.remove('is-done'); }, 1600);
+      });
+    });
+  </script>
+</Base>
