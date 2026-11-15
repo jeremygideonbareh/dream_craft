@@ -99,3 +99,17 @@ address and sender can be changed.
 Some wording contains words in curly brackets, such as `for {qty} invites`.
 The site fills these in (here, the number of invites), so keep them when
 editing. The panel lists the placeholders under each such field.
+
+## Payments (no gateway)
+
+Customers pay by UPI or bank transfer from `/pay` and send a screenshot on
+WhatsApp. The page reads `?ref=MYN-1234&amount=5000` from the link, and is
+kept out of search engines and the sitemap.
+
+- **Settings → Payment** holds the wording, the bank details, the UPI ID and
+  an uploaded QR image. With no UPI ID and no QR, the UPI card is hidden.
+- In an enquiry, **Ask for a payment** follows *quoted − received* until
+  someone types their own figure. **Send payment link** opens WhatsApp to the
+  customer with `settings.payment.customerMessage` filled in.
+- **Amount received** (needs `20261115000000_payments.sql`) is for money seen
+  in the bank, never a screenshot. `received_at` is stamped automatically.

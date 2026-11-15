@@ -9,3 +9,6 @@ _legacy/
 .DS_Store
 Thumbs.db
 *.log
+
+# client guides (shared directly, not part of the site)
+/*.pdf
