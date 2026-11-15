@@ -15,7 +15,15 @@
   let notes = $state('');
   let quoted = $state<number | null>(null);
   let received = $state<number | null>(null);
-  let request = $state<number | null>(null);
+  /* the amount to ask for follows "quoted − received" until someone types
+     their own figure into the box */
+  let requestTyped = $state<number | null>(null);
+  let requestEdited = $state(false);
+  const request = $derived.by(() => {
+    if (requestEdited) return requestTyped && requestTyped > 0 ? requestTyped : null;
+    const left = (quoted ?? 0) - (received ?? 0);
+    return left > 0 ? left : null;
+  });
 
   const products = $derived((app.docs.products?.draft ?? []) as { id: string; title: string }[]);
   const gallery = $derived((app.docs.gallery?.draft ?? []) as { id: string; title: string }[]);
@@ -47,7 +55,8 @@
     notes = e.internal_notes ?? '';
     quoted = e.quoted_amount;
     received = e.amount_received ?? null;
-    request = suggested(e);
+    requestEdited = false;
+    requestTyped = null;
     refs = await signedRefs(e.reference_paths);
   }
 
@@ -98,18 +107,18 @@
   const tracksPayments = (e: Enquiry) => 'amount_received' in e;
   const inr = (n: number) => '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
   const payCopy = $derived((app.docs.settings?.published?.payment ?? app.docs.settings?.draft?.payment) as { enabled?: boolean; customerMessage?: string } | undefined);
-  const suggested = (e: Enquiry) => {
-    const left = (e.quoted_amount ?? 0) - (e.amount_received ?? 0);
-    return left > 0 ? left : null;
-  };
   const payLink = (e: Enquiry, amount: number | null) => {
     const u = new URL('../pay/', location.href);
     u.searchParams.set('ref', e.ref);
     if (amount && amount > 0) u.searchParams.set('amount', String(amount));
     return u.toString();
   };
+  // with no amount, a template that mentions {amount} would read oddly, so a
+  // plain wording is used instead
   const payMessage = (e: Enquiry, amount: number | null) =>
-    (payCopy?.customerMessage || 'Hi {name}, you can pay for {ref} here: {link}')
+    (amount || !/\{amount\}/.test(payCopy?.customerMessage ?? '{amount}')
+      ? payCopy?.customerMessage || 'Hi {name}, you can pay {amount} for {ref} here: {link}'
+      : 'Hi {name}, here are the payment details for your order {ref}: {link}')
       .replace(/\{name\}/g, e.name.split(' ')[0])
       .replace(/\{ref\}/g, e.ref)
       .replace(/\{amount\}/g, amount ? inr(amount) : '')
@@ -209,7 +218,7 @@
         {#if tracksPayments(open) && open.received_at}<p class="muted pay-note">Last recorded {new Date(open.received_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}. Only record money you have seen in the bank account, not a screenshot.</p>{/if}
         {#if payCopy?.enabled !== false}
           <div class="paylink">
-            <label class="f"><span>Ask for a payment (₹)</span><input type="number" min="0" bind:value={request} placeholder="Amount" /></label>
+            <label class="f"><span>Ask for a payment (₹)</span><input type="number" min="0" value={request ?? ''} placeholder="Amount" oninput={(ev) => { requestEdited = true; requestTyped = ev.currentTarget.value === '' ? null : Number(ev.currentTarget.value); }} /></label>
             <a class="btn btn--sm btn--go" href={waTo(open, payMessage(open, request))} target="_blank" rel="noopener">Send payment link</a>
             <button class="btn btn--sm btn--ghost" onclick={copyPayLink}>Copy link</button>
           </div>
