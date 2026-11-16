@@ -84,11 +84,16 @@ addresses, separated by commas), the sender name and address, and whether
 customers get a confirmation email. **Send a test alert** checks the whole
 chain and reports what Resend answered.
 
-Until `mynsera.in` is verified in Resend, emails can only come from
-`onboarding@resend.dev` and only reach the Resend account's own address
-(mynsera@gmail.com). Verify the domain in Resend, add its DNS records at the
-domain host, then change both sender addresses to e.g. `hello@mynsera.in`
-and switch on customer confirmations.
+`mynsera.in` is verified in Resend (region Tokyo; DNS records at Hostinger),
+and alerts are sent from `Mynséra Studio <hello@mynsera.in>`. To switch on
+customer confirmations, set their sender to `hello@mynsera.in` too.
+
+Supabase Auth (password resets, invite confirmations, sign-in links) also
+sends through Resend: SMTP `smtp.resend.com:465`, user `resend`, the Resend
+key as password, sender `Mynséra <hello@mynsera.in>`, limit 60 emails an hour,
+with branded templates. All of it is set in Supabase → Authentication, not in
+this repo. The stored Resend key can only send; adding or checking domains
+needs the Resend dashboard.
 
 The screen needs `supabase/migrations/20261113000000_email_settings.sql`
 applied once. Until then it shows a notice and only the single alert
