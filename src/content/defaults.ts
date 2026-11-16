@@ -40,7 +40,7 @@ export const defaults = {
     footer: {
       startTitle: 'Start here',
       startText: "Tell us what you're planning. Upload your inspiration and get an approximate price in about two minutes.",
-      madeIn: 'Handmade in Meghalaya',
+      madeIn: 'Made in Meghalaya',
       studioTitle: 'Studio',
       pricingLink: 'Packages & pricing',
       privacyLink: 'Privacy notice',
