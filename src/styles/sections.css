@@ -374,7 +374,7 @@ html.reduced .process__rail i{transform:none}
 .pay__rows > div{display:grid;grid-template-columns:8.5rem 1fr;gap:.6rem;padding:.65rem 0;border-bottom:1px solid var(--line);align-items:center}
 .pay__rows > div:last-child{border-bottom:0}
 .pay__rows dt{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
-.pay__rows dd{margin:0;display:flex;justify-content:space-between;align-items:center;gap:.6rem;font-size:1rem;font-variant-numeric:tabular-nums;word-break:break-all}
+.pay__rows dd{margin:0;display:flex;justify-content:space-between;align-items:center;gap:.6rem;font-size:1rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .pay__copy{flex:none;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--line);color:var(--ink);transition:background .25s,color .25s}
 .pay__copy:hover{background:var(--ink);color:var(--cream)}
 .pay__copy.is-done{background:var(--sage-d);border-color:var(--sage-d);color:var(--cream)}
