@@ -75,7 +75,7 @@ export const defaults = {
       showInFooter: true,
       footerLink: 'Make a payment',
       eyebrow: 'Payment',
-      title: 'Pay your advance',
+      title: 'Complete your payment',
       intro: 'Pay by UPI or bank transfer, then send us a screenshot on WhatsApp so we can confirm your order.',
       forReference: 'Payment for',
       amountLabel: 'Amount',
@@ -102,7 +102,7 @@ export const defaults = {
       safetyNote: 'Only pay after you have received a written quotation from us. We will never ask you to pay into any other account.',
       disabledText: 'Message us on WhatsApp for payment details.',
       // sent from the studio panel to the customer, with their link
-      customerMessage: 'Hi {name}, thank you for confirming your order {ref}. You can pay the advance of {amount} here: {link}',
+      customerMessage: 'Hi {name}, thank you for confirming your order {ref}. You can make the full payment of {amount} here: {link}',
     },
   },
 
@@ -150,7 +150,7 @@ export const defaults = {
         { title: 'Choose the details', text: 'Size, colour, paper, finishing, quantity and budget, all tap-to-select.' },
         { title: 'See an approximate price', text: 'An estimate appears as you choose. No waiting to find out if it fits.' },
         { title: 'We review & quote', text: 'We study your enquiry and send a final written quotation.' },
-        { title: 'Confirm your order', text: 'Approve the quote and design, then we reserve your production slot.' },
+        { title: 'Confirm your order', text: 'Approve the quote and pay in full, then we design, finalise and make your order.' },
         { title: 'Made by hand, delivered', text: 'Crafted in our Shillong studio and dispatched by courier.' },
       ],
     },
@@ -255,7 +255,7 @@ export const defaults = {
       { question: 'Do you offer discounts on large orders?', answer: 'Yes. Customised invitation orders above 500 pieces get 15% off.' },
       { question: 'What if my wedding is soon?', answer: "We can often help. Rush orders carry a ₹20 per invite surcharge. Enter your date on the quote form and we'll flag it automatically." },
       { question: 'How does delivery work?', answer: 'Delivery is arranged through a third-party courier. Any delivery charges are communicated separately.' },
-      { question: 'What happens after I send an enquiry?', answer: 'You get a reference number straight away. We review your inspiration and requirements and send a final written quotation. Once you confirm and approve the design, we reserve your production slot.' },
+      { question: 'What happens after I send an enquiry?', answer: 'You get a reference number straight away. We review your inspiration and requirements and send a final written quotation. Once you approve it and pay in full, we design your order, and production starts as soon as you approve the final design.' },
     ],
   },
 
@@ -287,7 +287,7 @@ export const defaults = {
     nextSteps: [
       'We review your inspiration and requirements',
       'We send a final written quotation',
-      'You confirm and approve the design, then we make it',
+      'You approve the quote and pay, then we design and make it',
     ],
     whatsappButton: 'Continue on WhatsApp',
     whatsappMessage: 'Hi {brand}! I just sent enquiry {ref} on your website for {product} ({details}).',
@@ -445,11 +445,11 @@ export const defaults = {
       sections: [
         {
           heading: 'Prices and quotations',
-          body: 'The price range shown on this website is approximate. It is there to help you plan, not to fix a price. Your final price depends on the actual design, materials and production required, and is confirmed in the written quotation we send you. A quotation is valid for 30 days.',
+          body: 'The price range shown on this website is approximate. It is there to help you plan, not to fix a price. Your final price depends on the actual design, materials and production required, and is confirmed in the written quotation we send you. A quotation is valid for 14 days.',
         },
         {
           heading: 'Confirming an order',
-          body: 'An order is confirmed when you approve the quotation in writing and pay the advance we agree. Your production slot is reserved from that point. [Mynséra: confirm the advance you take, for example 50%.]',
+          body: 'An order is confirmed when you approve the quotation in writing and pay the full amount. We take 100% payment before we start your design and production, and your production slot is reserved from that point.',
         },
         {
           heading: 'Design approval',
