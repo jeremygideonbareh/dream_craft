@@ -128,7 +128,7 @@ const client = {
     }
 
     const wa = document.getElementById('payWa') as HTMLAnchorElement | null;
-    if (wa) wa.href = whatsappLink(data.contact, fill(data.whatsappMessage, { brand: data.brand, ref: ref || 'my order', amount: amount ? inr(amount) : 'the advance' }));
+    if (wa) wa.href = whatsappLink(data.contact, fill(data.whatsappMessage, { brand: data.brand, ref: ref || 'my order', amount: amount ? inr(amount) : 'the full amount' }));
 
     document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => {
       const label = b.textContent;
