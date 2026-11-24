@@ -9,7 +9,7 @@
   interface Props { obj: any; k: string | number; label?: string; depth?: number }
   let { obj, k, label, depth = 0 }: Props = $props();
 
-  const LONG = /lede|text|blurb|description|answer|note|hint|placeholder|consent|disclaimer|success|alt|tagline|start|message|errors?$/i;
+  const LONG = /lede|text|body|blurb|description|answer|note|hint|placeholder|consent|disclaimer|success|alt|tagline|start|message|errors?$/i;
   const IMAGE = /^(image|cover|photo|logo|qrImage)$/i;
   const IMAGE_LIST = /^(images|photos)$/i;   // a list whose items are each one image
 
