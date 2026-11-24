@@ -298,7 +298,7 @@ html.reduced .thread{opacity:.5}
 .prose section{padding:1.6rem 0;border-bottom:1px solid var(--line)}
 .prose h2{font-size:clamp(1.2rem,2.2vw,1.6rem);margin-bottom:.6rem}
 .prose p{color:var(--ink-2);line-height:1.75}
-.prose ul{color:var(--ink-2);line-height:1.7;margin:.2rem 0 .9rem;padding-left:1.2rem}
+.prose ul{list-style:disc;color:var(--ink-2);line-height:1.7;margin:.2rem 0 .9rem;padding-left:1.2rem}
 .prose li{margin-bottom:.45rem}
 .prose li::marker{color:var(--terra)}
 .prose__contact{padding-top:1.6rem;color:var(--ink-2)}
