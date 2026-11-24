@@ -10,6 +10,18 @@ interface Props {
 }
 const { doc, page } = Astro.props;
 const { settings, legal } = await loadContent();
+
+// A section body can hold several paragraphs (one per line) and bullet lists
+// (lines starting with "- "), so long terms stay readable.
+type Block = { list: false; text: string } | { list: true; items: string[] };
+const blocks = (body: string) =>
+  body.split(/\n+/).map((l) => l.trim()).filter(Boolean).reduce<Block[]>((out, line) => {
+    const item = line.match(/^[-•]\s+(.*)$/);
+    const last = out[out.length - 1];
+    if (item) last?.list ? last.items.push(item[1]) : out.push({ list: true, items: [item[1]] });
+    else out.push({ list: false, text: line });
+    return out;
+  }, []);
 ---
 <Base page={page} title={doc.title} description={doc.intro.slice(0, 180)}>
   <section class="phead legal">
@@ -27,7 +39,7 @@ const { settings, legal } = await loadContent();
         {doc.sections.map((s) => (
           <section data-reveal="up">
             <h2 data-split="lines">{s.heading}</h2>
-            <p>{s.body}</p>
+            {blocks(s.body).map((b) => (b.list ? <ul>{b.items.map((i) => <li>{i}</li>)}</ul> : <p>{b.text}</p>))}
           </section>
         ))}
         <p class="prose__contact">
