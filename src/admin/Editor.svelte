@@ -30,6 +30,13 @@
     history = await versions(docKey) as any;
     showHistory = !showHistory;
   }
+  // throw away the draft and go back to exactly what is on the website now;
+  // works even for sections that have never been published from the panel
+  async function restoreLive() {
+    if (!confirm(`Put ${title} back to what is on the website now? Your unpublished changes are lost.`)) return;
+    doc.draft = structuredClone($state.snapshot(doc.published));
+    if (await saveDoc(docKey)) toast('Back to the version on the website.');
+  }
   function resetToDefaults() {
     if (!confirm(`Reset ${title} to the original wording? This only changes the draft.`)) return;
     doc.draft = structuredClone(defaults[docKey]);
@@ -85,8 +92,16 @@
 {#if showHistory}
   <div class="history">
     <h4>Earlier versions</h4>
+    <ul>
+      {#if doc.published && Object.keys(doc.published).length}
+        <li class="history__live">
+          <span><b>On the website now</b>{dirty ? '' : ' (same as your draft)'}</span>
+          <button class="btn btn--sm btn--ghost" onclick={restoreLive} disabled={!editable || !dirty}>Restore</button>
+        </li>
+      {/if}
+    </ul>
     {#if !history.length}
-      <p class="muted">Nothing published yet, so there is no history.</p>
+      <p class="muted">Earlier versions are kept from now on, each time you publish.</p>
     {:else}
       <ul>
         {#each history as v}
