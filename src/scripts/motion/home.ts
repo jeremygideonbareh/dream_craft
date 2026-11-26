@@ -1,11 +1,11 @@
 /* =========================================================
    Home page motion
    ========================================================= */
-import { gsap, ScrollTrigger, SplitText, REDUCED, FINE, $, $$, registerPage } from './core';
+import { gsap, ScrollTrigger, SplitText, REDUCED, FINE, $, $$, registerPage, ariaFor } from './core';
 
 function intro() {
   const lede = $('[data-hero-lede]');
-  const split = lede ? SplitText.create(lede, { type: 'lines,words', mask: 'lines', linesClass: 'split-line' }) : null;
+  const split = lede ? SplitText.create(lede, { type: 'lines,words', mask: 'lines', linesClass: 'split-line', aria: ariaFor(lede) }) : null;
 
   gsap.set('.hero__arch', { clipPath: 'inset(100% 0% 0% 0% round 50% 50% 26px 26px)' });
   const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });

@@ -16,6 +16,11 @@ gsap.ticker.lagSmoothing(0);
 
 export { gsap, ScrollTrigger, SplitText, Flip };
 
+// SplitText names the split element with aria-label so screen readers read it
+// whole. That is only allowed on headings; elsewhere the split words read fine
+// as they are, so the label is left off.
+export const ariaFor = (el: Element): 'auto' | 'none' => (/^H[1-6]$/.test(el.tagName) ? 'auto' : 'none');
+
 // ?motion=on forces full motion for this tab (for previewing on machines
 // with "reduce motion" switched on); ?motion=off does the opposite.
 const force = (() => {

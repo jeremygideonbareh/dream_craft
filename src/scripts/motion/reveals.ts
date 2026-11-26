@@ -16,7 +16,7 @@
    data-thread                      a line that draws itself as you scroll
    .ph .draw                        placeholder line-art draws itself
    ========================================================= */
-import { gsap, ScrollTrigger, SplitText, REDUCED, $$, inr } from './core';
+import { gsap, ScrollTrigger, SplitText, REDUCED, $$, inr, ariaFor } from './core';
 
 const enter = (trigger: Element, start = 'top 86%') => ({ trigger, start, once: true });
 
@@ -31,6 +31,7 @@ export function reveals() {
     const kind = el.dataset.split as 'chars' | 'words' | 'lines';
     SplitText.create(el, {
       type: kind === 'chars' ? 'lines,words,chars' : kind === 'words' ? 'lines,words' : 'lines',
+      aria: ariaFor(el),
       mask: 'lines',
       linesClass: 'split-line',
       autoSplit: true,
@@ -51,6 +52,7 @@ export function reveals() {
   $$('[data-scrub-text]').forEach((el) => {
     SplitText.create(el, {
       type: 'words',
+      aria: ariaFor(el),
       autoSplit: true,
       onSplit(self) {
         return gsap.fromTo(self.words, { opacity: 0.14 }, {

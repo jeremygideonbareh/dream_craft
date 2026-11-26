@@ -52,7 +52,7 @@ html.js [data-hero-lede]{visibility:hidden}
    ========================================================= */
 .strip{background:var(--sage-d);color:var(--cream);padding:1.1rem 0;overflow:clip;display:flex;flex-direction:column;gap:.5rem}
 .strip__row{display:flex;width:max-content;will-change:transform}
-.strip__row--alt{opacity:.45}
+.strip__row--alt{opacity:.8}
 .strip__set{display:flex;align-items:center;gap:2rem;padding-right:2rem}
 .strip__set span{font-family:var(--f-disp);font-size:clamp(1.2rem,2.6vw,2rem);font-style:italic;font-weight:400;white-space:nowrap}
 .strip__row--alt .strip__set span{font-style:normal;font-family:var(--f-ui);font-size:clamp(.7rem,1vw,.8rem);letter-spacing:.3em;text-transform:uppercase}

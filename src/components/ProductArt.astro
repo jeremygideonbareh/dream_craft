@@ -18,7 +18,7 @@ const icons: Record<string, string> = {
 const petal = 'M50 10c16 18 16 62 0 80-16-18-16-62 0-80ZM10 50c18-16 62-16 80 0-18 16-62 16-80 0Z';
 ---
 {file ? (
-  <Pic src={file} alt={product.title} widths={[480, 800, 1200]} sizes={sizes} eager={eager} />
+  <Pic src={file} alt={product.title} widths={[240, 360, 480, 800, 1200]} sizes={sizes} eager={eager} />
 ) : (
   <div class="ph" role="img" aria-label={`${product.title}, ${work.photosComingSoon.toLowerCase()}`}>
     <svg viewBox="0 0 100 100" aria-hidden="true"><path class="draw" d={icons[product.id] ?? petal} /></svg>

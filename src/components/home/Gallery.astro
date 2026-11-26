@@ -22,7 +22,7 @@ const items = gallery.filter((x) => x.visible).slice(0, 12);
         <li class:list={['wall__tile', { 'wall__tile--hero': i === 0 }]} data-wall-tile>
           <a class="wall__link" href={url(`quote/?product=${x.product}&ref=${encodeURIComponent(x.id)}`)} data-cursor="Like this">
             <div class="wall__img" data-wall-img>
-              <Pic src={x.image} alt={x.alt} widths={i === 0 ? [600, 1000, 1400] : [360, 640, 900]} sizes={i === 0 ? '(max-width: 900px) 92vw, 34vw' : '(max-width: 900px) 46vw, 17vw'} />
+              <Pic src={x.image} alt={x.alt} widths={i === 0 ? [600, 1000, 1400] : [240, 360, 640, 900]} sizes={i === 0 ? '(max-width: 900px) 92vw, 34vw' : '(max-width: 900px) 46vw, 17vw'} />
             </div>
             <span class="wall__cap"><b>{x.title}</b><em>{g.itemHint}</em></span>
           </a>
