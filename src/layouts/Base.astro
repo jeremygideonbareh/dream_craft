@@ -62,7 +62,9 @@ if (page === 'home') {
     sameAs: [contact.instagramUrl].filter(Boolean),
     email: contact.email || undefined,
     telephone: contact.whatsappNumber ? `+${contact.whatsappNumber.replace(/\D/g, '')}` : undefined,
-    makesOffer: products.filter((p) => p.visible).map((p) => ({ '@type': 'Offer', itemOffered: { '@type': 'Product', name: p.title, description: p.blurb } })),
+    // made to order with no fixed price, so they are services, not products
+    // (Google expects a price and reviews on every Product)
+    makesOffer: products.filter((p) => p.visible).map((p) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: p.title, description: p.blurb } })),
   });
   // the site's own name, so Google shows "Mynséra" above the result rather than the web address
   jsonLd.push({
