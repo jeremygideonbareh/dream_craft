@@ -19,6 +19,7 @@
   // friendlier names for the handful of keys whose code name isn't obvious
   const NAMES: Record<string, string> = {
     lede: 'Intro paragraph', eyebrow: 'Small label above the heading',
+    seo: 'Search engines (what Google shows)', googleVerification: 'Google Search Console verification code', streetAddress: 'Street address', postalCode: 'PIN code',
     titleAccent: 'Heading, highlighted words', titleEnd: 'Heading, last words',
     line1: 'Headline line 1', line2: 'Headline line 2 (highlighted)', line3: 'Headline line 3',
     cta: 'Closing call to action', sub: 'Line under the heading', blurb: 'Short description',

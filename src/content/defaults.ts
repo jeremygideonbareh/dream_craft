@@ -20,12 +20,14 @@ export const defaults = {
     },
     contact: {
       location: 'Shillong, Meghalaya',
+      streetAddress: 'Near FCI Regional Office, Mawlai Mawroh',
+      postalCode: '793008',
       shipping: 'Shipping across India & abroad',
       instagramHandle: '@dreamcraft',
       instagramUrl: 'https://www.instagram.com/dreamcraft',
-      whatsappNumber: '',
+      whatsappNumber: '+91 70059 47743',
       whatsappLink: 'https://wa.me/message/4C2ID7G54JAIJ1',
-      email: '',
+      email: 'mynsera@gmail.com',
     },
     ticker: ['Dream Craft is now Mynséra', 'Now booking 2026–27 weddings', 'Bespoke wedding accessories', 'Shipping across India & abroad'],
     nav: {
@@ -103,6 +105,28 @@ export const defaults = {
       disabledText: 'Message us on WhatsApp for payment details.',
       // sent from the studio panel to the customer, with their link
       customerMessage: 'Hi {name}, thank you for confirming your order {ref}. You can make the full payment of {amount} here: {link}',
+    },
+    // what Google shows for each page. Leave a box empty to use the page's own wording.
+    seo: {
+      googleVerification: '',
+      home: {
+        title: 'Mynséra | Bespoke Wedding Invitations & Keepsakes, Shillong',
+        description: 'Custom wedding invitations, bouquets, boutonnieres, ring holders and gifts, handmade in Shillong, Meghalaya. See an approximate price in 2 minutes.',
+      },
+      work: {
+        title: 'Our Work: Wedding Invitations, Bouquets & Gifts | Mynséra',
+        description: 'Wedding invitations, bridal bouquets, ring holders and keepsakes made by Mynséra (formerly Dream Craft) in Shillong. Tap any piece to start a quote.',
+      },
+      pricing: {
+        title: 'Wedding Invitation Prices & Packages | Mynséra, Shillong',
+        description: 'Starting prices for custom wedding invitations and keepsakes from Mynséra in Shillong, with bulk discounts and an instant estimate for your order.',
+      },
+      quote: {
+        title: 'Get a Quote for Custom Invitations & Gifts | Mynséra',
+        description: 'Tell us what you would like in about two minutes and see an approximate price straight away. Custom invitations, florals and keepsakes from Shillong.',
+      },
+      privacy: { title: '', description: '' },
+      terms: { title: '', description: '' },
     },
   },
 

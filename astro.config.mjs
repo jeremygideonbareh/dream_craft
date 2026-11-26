@@ -12,7 +12,7 @@ export default defineConfig({
   integrations: [
     svelte(),
     // the studio panel, the not-found page and the payment page stay out of search engines
-    sitemap({ filter: (page) => !['/admin/', '/404', '/pay/'].some((p) => new URL(page).pathname.includes(p)) }),
+    sitemap({ lastmod: new Date(), filter: (page) => !['/admin/', '/404', '/pay/'].some((p) => new URL(page).pathname.includes(p)) }),
   ],
   // images uploaded from the admin panel are optimised at build time
   image: { domains: ['ttgkrrqzmrlublrbhxex.supabase.co'] },
